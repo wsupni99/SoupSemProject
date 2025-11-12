@@ -22,6 +22,7 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
     private static final String SQL_DELETE = "DELETE FROM project.tasks WHERE task_id=?";
     private static final String SQL_FIND_BY_PARENT_TASK_ID = "SELECT * FROM project.tasks WHERE parent_task_id = ?";
     private static final String SQL_FIND_BY_SPRINT = "SELECT * FROM project.tasks WHERE sprint_id = ?";
+    private static final String SQL_COUNT = "SELECT COUNT(*) FROM project.sprints WHERE project_id = ?";
 
     @Override
     public List<Task> findAll() {
@@ -123,7 +124,7 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
     }
 
     @Override
-    public void update(Task task) {
+    public void update(Long projectId, Task task) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setString(1, task.getName());
@@ -190,4 +191,19 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
         }
         return result;
     }
+
+    @Override
+    public int countByProjectId(long projectId) {
+        String sql = SQL_COUNT;
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, projectId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+            return 0;
+        } catch (SQLException e) {
+            throw new InvalidDataException(e.getMessage());
+        }
+    }
+
 }

@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void updateUser(User user) {
-        userRepository.update(user);
+        userRepository.update(user.getUserId(), user);
     }
 
     public void deleteUser(Long id) {
@@ -36,5 +36,10 @@ public class UserServiceImpl implements UserService {
 
     public Optional<User> getByEmail(String login){
         return userRepository.findByEmail(login);
+    }
+
+    @Override
+    public List<User> getAllManagers() {
+        return userRepository.findByRole(2L);
     }
 }

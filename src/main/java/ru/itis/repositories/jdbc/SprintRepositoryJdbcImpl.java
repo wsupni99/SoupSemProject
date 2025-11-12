@@ -18,6 +18,7 @@ public class SprintRepositoryJdbcImpl implements SprintRepository {
     private static final String SQL_INSERT = "INSERT INTO project.sprints (project_id, name, start_date, end_date) VALUES (?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE project.sprints SET project_id=?, name=?, start_date=?, end_date=? WHERE sprint_id=?";
     private static final String SQL_DELETE = "DELETE FROM project.sprints WHERE sprint_id=?";
+    private static final String SQL_COUNT = "SELECT COUNT(*) FROM project.sprints WHERE project_id = ?";
 
     @Override
     public List<Sprint> findAll() {
@@ -80,7 +81,7 @@ public class SprintRepositoryJdbcImpl implements SprintRepository {
     }
 
     @Override
-    public void update(Sprint sprint) {
+    public void update(Long projectId, Sprint sprint) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setLong(1, sprint.getProjectId());
@@ -104,4 +105,19 @@ public class SprintRepositoryJdbcImpl implements SprintRepository {
             throw new InvalidDataException(e.getMessage());
         }
     }
+
+    @Override
+    public int countByProjectId(long projectId) {
+        String sql = SQL_COUNT;
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, projectId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+            return 0;
+        } catch (SQLException e) {
+            throw new InvalidDataException(e.getMessage());
+        }
+    }
+
 }

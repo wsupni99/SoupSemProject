@@ -70,7 +70,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     }
 
     @Override
-    public void update(User user) {
+    public void update(Long projectId, User user) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setString(1, user.getName());

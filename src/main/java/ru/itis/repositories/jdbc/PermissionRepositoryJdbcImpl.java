@@ -61,7 +61,7 @@ public class PermissionRepositoryJdbcImpl implements PermissionRepository {
     }
 
     @Override
-    public void update(Permission permission) {
+    public void update(Long projectId, Permission permission) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setString(1, permission.getPermissionName());

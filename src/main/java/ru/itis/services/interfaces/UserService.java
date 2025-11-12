@@ -2,6 +2,7 @@ package ru.itis.services.interfaces;
 
 import ru.itis.entities.User;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -16,4 +17,6 @@ public interface UserService {
     void deleteUser(Long id);
 
     void createUser(User user);
+
+    List<User> getAllManagers();
 }

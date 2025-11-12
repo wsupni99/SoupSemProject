@@ -2,16 +2,23 @@ package ru.itis.services.impl;
 
 import ru.itis.entities.Project;
 import ru.itis.exceptions.EntityNotFoundException;
+import ru.itis.exceptions.ProjectNotEmptyException;
 import ru.itis.repositories.interfaces.ProjectRepository;
+import ru.itis.repositories.interfaces.SprintRepository;
+import ru.itis.repositories.interfaces.TaskRepository;
 import ru.itis.services.interfaces.ProjectService;
 
 import java.util.List;
 
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
+    private final SprintRepository sprintRepository;
+    private final TaskRepository taskRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, SprintRepository sprintRepository, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
+        this.sprintRepository = sprintRepository;
+        this.taskRepository = taskRepository;
     }
 
     @Override
@@ -31,20 +38,26 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void update(Long id, Project updated) {
-        Project existing = getById(id);
+    public void update(Long projectId, Project updated) {
+        Project existing = projectRepository.findById(projectId)
+                .orElseThrow(() -> new EntityNotFoundException("Проект не найден"));
         existing.setName(updated.getName());
         existing.setDescription(updated.getDescription());
         existing.setStartDate(updated.getStartDate());
         existing.setEndDate(updated.getEndDate());
         existing.setStatus(updated.getStatus());
         existing.setManagerId(updated.getManagerId());
-        projectRepository.save(existing);
+        projectRepository.update(projectId, existing);
     }
 
     @Override
-    public void delete(Long id) {
-        projectRepository.deleteById(id);
+    public void delete(Long projectId) {
+        if (sprintRepository.countByProjectId(projectId) > 0 ||
+                taskRepository.countByProjectId(projectId) > 0) {
+            throw new ProjectNotEmptyException("Нельзя удалить проект: к нему привязаны спринты или задачи");
+        }
+        projectRepository.deleteById(projectId);
     }
+
 }
 

@@ -97,7 +97,7 @@ public class TaskLogRepositoryJdbcImpl implements TaskLogRepository {
     }
 
     @Override
-    public void update(TaskLog log) {
+    public void update(Long projectId, TaskLog log) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setLong(1, log.getTaskId());

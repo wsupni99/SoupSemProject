@@ -96,7 +96,7 @@ public class UserRoleRepositoryJdbcImpl implements UserRoleRepository {
     }
 
     @Override
-    public void update(UserRole ur) {
+    public void update(Long projectId, UserRole ur) {
         throw new UnsupportedOperationException("Операция update для таблиц с составным ключом не поддерживается");
     }
 
