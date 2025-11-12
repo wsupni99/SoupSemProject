@@ -1,0 +1,19 @@
+package ru.itis.services.interfaces;
+
+import ru.itis.entities.UserRole;
+
+import java.util.List;
+
+public interface UserRoleService {
+    void create(UserRole userRole);
+
+    UserRole getById(Long userId, Long roleId);
+
+    List<UserRole> getAll();
+
+    void update(Long userId, Long roleId, UserRole updated);
+
+    void delete(Long userId, Long roleId);
+
+    boolean isAdmin(Long userId);
+}
