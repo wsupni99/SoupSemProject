@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(name = "ProjectServlet", urlPatterns = {"/projects", "/project/*"})
 public class ProjectServlet extends HttpServlet {
@@ -21,17 +22,14 @@ public class ProjectServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("ProjectServlet активен");
+
         String uri = req.getRequestURI();
-        if (uri.equals("/projects")) {
-            req.setAttribute("projects", projectService.getAll());
+        if (uri.equals("/soup_sem_project_war/projects") || uri.equals("/projects")) {
+            List<Project> list = projectService.getAll();
+            System.out.println("size=" + list.size());
+            req.setAttribute("projects", list);
             req.getRequestDispatcher("/WEB-INF/jsp/projects.jsp").forward(req, resp);
-        } else if (uri.matches("/project/\\d+")) {
-            Long id = Long.parseLong(uri.substring(uri.lastIndexOf("/") + 1));
-            req.setAttribute("project", projectService.getById(id));
-            req.setAttribute("tasks", taskService.getByProjectId(id));
-            req.getRequestDispatcher("/WEB-INF/jsp/project.jsp").forward(req, resp);
-        } else if (uri.equals("/project/new")) {
-            req.getRequestDispatcher("/WEB-INF/jsp/projectForm.jsp").forward(req, resp);
         }
     }
 
