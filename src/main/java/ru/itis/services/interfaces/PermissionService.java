@@ -7,10 +7,8 @@ public interface PermissionService {
     void create(Permission permission);
     Permission getById(Long id);
     List<Permission> getAll();
-    void update(Long id, Permission updated);
+    void update(Permission updated);
     void delete(Long id);
-
-    // Функционал для проверки доступа
     boolean hasPermission(Long userId, String permissionName);
     List<Permission> getUserPermissions(Long userId);
     boolean roleHasPermission(Long roleId, String permissionName);

@@ -61,7 +61,7 @@ public class RoleRepositoryJdbcImpl implements RoleRepository {
     }
 
     @Override
-    public void update(Long projectId, Role role) {
+    public void update(Role role) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setString(1, role.getRoleName());

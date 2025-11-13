@@ -38,8 +38,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void update(Long projectId, Project updated) {
-        Project existing = projectRepository.findById(projectId)
+    public void update(Project updated) {
+        Project existing = projectRepository.findById(updated.getProjectId())
                 .orElseThrow(() -> new EntityNotFoundException("Проект не найден"));
         existing.setName(updated.getName());
         existing.setDescription(updated.getDescription());
@@ -47,7 +47,7 @@ public class ProjectServiceImpl implements ProjectService {
         existing.setEndDate(updated.getEndDate());
         existing.setStatus(updated.getStatus());
         existing.setManagerId(updated.getManagerId());
-        projectRepository.update(projectId, existing);
+        projectRepository.update(existing);
     }
 
     @Override

@@ -32,8 +32,8 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     }
 
     @Override
-    public void update(Long roleId, Long permissionId, RolePermission updated) {
-        RolePermission existing = getById(roleId, permissionId);
+    public void update(RolePermission updated) {
+        RolePermission existing = getById(updated.getRoleId(), updated.getPermissionId());
         existing.setRoleId(updated.getRoleId());
         existing.setPermissionId(updated.getPermissionId());
         rolePermissionRepository.save(existing);

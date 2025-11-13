@@ -6,6 +6,6 @@ public interface RolePermissionService {
     void create(RolePermission rolePermission);
     RolePermission getById(Long roleId, Long permissionId);
     List<RolePermission> getAll();
-    void update(Long roleId, Long permissionId, RolePermission updated);
+    void update(RolePermission updated);
     void delete(Long roleId, Long permissionId);
 }

@@ -112,11 +112,12 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
             ps.setString(4, task.getStatus());
             ps.setDate(5, new java.sql.Date(task.getCreatedAt().getTime()));
             ps.setDate(6, new java.sql.Date(task.getUpdatedAt().getTime()));
-            ps.setDate(7, new java.sql.Date(task.getDeadline().getTime()));
+            ps.setDate(7, task.getDeadline() != null ? new java.sql.Date(task.getDeadline().getTime()) : null);
             ps.setObject(8, task.getParentTaskId());
             ps.setLong(9, task.getProjectId());
             ps.setLong(10, task.getSprintId());
             ps.setLong(11, task.getUserId());
+
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new InvalidDataException(e.getMessage());
@@ -124,7 +125,7 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
     }
 
     @Override
-    public void update(Long projectId, Task task) {
+    public void update(Task task) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setString(1, task.getName());
@@ -159,9 +160,8 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
     @Override
     public List<Task> findByParentTaskId(Long parentTaskId) {
         List<Task> result = new ArrayList<>();
-        String sql = SQL_FIND_BY_PARENT_TASK_ID;
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_PARENT_TASK_ID)) {
             ps.setLong(1, parentTaskId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -177,9 +177,8 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
     @Override
     public List<Task> findBySprintId(Long sprintId) {
         List<Task> result = new ArrayList<>();
-        String sql = SQL_FIND_BY_SPRINT;
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_SPRINT)) {
             ps.setLong(1, sprintId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -194,9 +193,8 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
 
     @Override
     public int countByProjectId(long projectId) {
-        String sql = SQL_COUNT;
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(SQL_COUNT)) {
             ps.setLong(1, projectId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1);
@@ -206,4 +204,44 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
         }
     }
 
+    public List<Task> findWithFilters(Long projectId, Long userId, String status, Long sprintId) {
+        List<Object> params = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM project.tasks WHERE 1=1");
+
+        if (projectId != null) {
+            sql.append(" AND project_id = ?");
+            params.add(projectId);
+        }
+        if (userId != null) {
+            sql.append(" AND user_id = ?");
+            params.add(userId);
+        }
+        if (status != null && !status.isEmpty()) {
+            sql.append(" AND status = ?");
+            params.add(status);
+        }
+        if (sprintId != null) {
+            sql.append(" AND sprint_id = ?");
+            params.add(sprintId);
+        }
+
+        try (Connection connection = DBUtil.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            List<Task> tasks = new ArrayList<>();
+
+            while (rs.next()) {
+                tasks.add(TaskMapper.map(rs));
+            }
+            return tasks;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

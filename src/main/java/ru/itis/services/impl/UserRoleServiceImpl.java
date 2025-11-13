@@ -38,12 +38,8 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
-    public void update(Long userId, Long roleId, UserRole updated) {
-        UserRoleId id = new UserRoleId(userId, roleId);
-        UserRole existing = getById(userId, roleId);
-        existing.setUserId(updated.getUserId());
-        existing.setRoleId(updated.getRoleId());
-        userRoleRepository.save(existing);
+    public void update(UserRole updated) {
+        userRoleRepository.update(updated);
     }
 
     @Override

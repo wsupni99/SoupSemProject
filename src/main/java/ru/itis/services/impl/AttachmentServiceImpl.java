@@ -30,8 +30,8 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
-    public void update(Long id, Attachment updated) {
-        Attachment existing = getById(id);
+    public void update(Attachment updated) {
+        Attachment existing = getById(updated.getAttachmentId());
         existing.setTaskId(updated.getTaskId());
         existing.setFileName(updated.getFileName());
         existing.setFileUrl(updated.getFileUrl());

@@ -68,7 +68,7 @@ public class ProjectRepositoryJdbcImpl implements ProjectRepository {
 
 
     @Override
-    public void update(Long projectId, Project project) {
+    public void update(Project project) {
         String sql = SQL_UPDATE;
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -78,7 +78,7 @@ public class ProjectRepositoryJdbcImpl implements ProjectRepository {
             ps.setDate(4, new java.sql.Date(project.getEndDate().getTime()));
             ps.setString(5, project.getStatus());
             ps.setLong(6, project.getManagerId());
-            ps.setLong(7, projectId);
+            ps.setLong(7, project.getProjectId());
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new InvalidDataException(e.getMessage());

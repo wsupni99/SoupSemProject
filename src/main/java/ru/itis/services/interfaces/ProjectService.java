@@ -8,6 +8,6 @@ public interface ProjectService {
     void create(Project project);
     Project getById(Long id);
     List<Project> getAll();
-    void update(Long id, Project updated);
+    void update(Project updated);
     void delete(Long id);
 }

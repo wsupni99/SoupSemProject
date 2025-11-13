@@ -11,7 +11,7 @@ public interface UserRoleService {
 
     List<UserRole> getAll();
 
-    void update(Long userId, Long roleId, UserRole updated);
+    void update(UserRole updated);
 
     void delete(Long userId, Long roleId);
 

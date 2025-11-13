@@ -115,7 +115,7 @@ public class WorkloadSummaryRepositoryJdbcImpl implements WorkloadSummaryReposit
     }
 
     @Override
-    public void update(Long projectId, WorkloadSummary ws) {
+    public void update(WorkloadSummary ws) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setLong(1, ws.getUserId());

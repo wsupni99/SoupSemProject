@@ -1,21 +1,32 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
-<head><title>Спринты</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Спринты</title>
+</head>
 <body>
-<p>Jsp работает</p>
 <h2>Список спринтов</h2>
-<table>
-    <tr><th>ID</th><th>Название</th><th>Проект</th><th>Дата начала</th><th>Дата окончания</th></tr>
-    <c:forEach var="sprint" items="${sprints}">
+    <table>
+        <thead>
         <tr>
-            <td>${sprint.sprintId}</td>
-            <td>${sprint.name}</td>
-            <td>${sprint.projectId}</td>
-            <td>${sprint.startDate}</td>
-            <td>${sprint.endDate}</td>
+            <th>Name</th>
+            <th>Project</th>
+            <th>Start Date</th>
+            <th>End Date</th>
         </tr>
-    </c:forEach>
-</table>
+        </thead>
+        <tbody>
+        <c:forEach var="sprint" items="${sprints}">
+            <tr>
+                <td>${sprint.name}</td>
+                <td>${projectNames[sprint.sprintId]}</td>
+                <td>${sprint.startDate}</td>
+                <td>${sprint.endDate}</td>
+            </tr>
+        </c:forEach>
+        </tbody>
+    </table>
 </body>
 </html>

@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public void updateUser(User user) {
-        userRepository.update(user.getUserId(), user);
+        userRepository.update(user);
     }
 
     public void deleteUser(Long id) {

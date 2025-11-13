@@ -30,8 +30,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void update(Long id, Comment updated) {
-        Comment existing = getById(id);
+    public void update(Comment updated) {
+        Comment existing = getById(updated.getCommentId());
         existing.setTaskId(updated.getTaskId());
         existing.setUserId(updated.getUserId());
         existing.setText(updated.getText());

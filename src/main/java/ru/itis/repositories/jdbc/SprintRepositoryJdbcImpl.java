@@ -81,7 +81,7 @@ public class SprintRepositoryJdbcImpl implements SprintRepository {
     }
 
     @Override
-    public void update(Long projectId, Sprint sprint) {
+    public void update(Sprint sprint) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setLong(1, sprint.getProjectId());

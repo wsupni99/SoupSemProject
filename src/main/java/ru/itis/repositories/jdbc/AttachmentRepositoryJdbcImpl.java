@@ -80,7 +80,7 @@ public class AttachmentRepositoryJdbcImpl implements AttachmentRepository {
     }
 
     @Override
-    public void update(Long projectId, Attachment attachment) {
+    public void update(Attachment attachment) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setLong(1, attachment.getTaskId());

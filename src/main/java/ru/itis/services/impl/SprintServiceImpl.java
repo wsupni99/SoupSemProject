@@ -1,17 +1,21 @@
 package ru.itis.services.impl;
 
+import ru.itis.entities.Project;
 import ru.itis.entities.Sprint;
 import ru.itis.exceptions.EntityNotFoundException;
 import ru.itis.repositories.interfaces.SprintRepository;
+import ru.itis.services.interfaces.ProjectService;
 import ru.itis.services.interfaces.SprintService;
 
 import java.util.List;
 
 public class SprintServiceImpl implements SprintService {
     private final SprintRepository sprintRepository;
+    private final ProjectService projectService;
 
-    public SprintServiceImpl(SprintRepository sprintRepository) {
+    public SprintServiceImpl(SprintRepository sprintRepository, ProjectService projectService) {
         this.sprintRepository = sprintRepository;
+        this.projectService = projectService;
     }
 
     @Override
@@ -31,8 +35,8 @@ public class SprintServiceImpl implements SprintService {
     }
 
     @Override
-    public void update(Long id, Sprint updated) {
-        Sprint existing = getById(id);
+    public void update(Sprint updated) {
+        Sprint existing = getById(updated.getSprintId());
         existing.setProjectId(updated.getProjectId());
         existing.setName(updated.getName());
         existing.setStartDate(updated.getStartDate());
@@ -43,5 +47,25 @@ public class SprintServiceImpl implements SprintService {
     @Override
     public void delete(Long id) {
         sprintRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Sprint> getAllSprints() {
+        return sprintRepository.findAll();
+    }
+
+    @Override
+    public List<Sprint> getByProjectId(Long projectId) {
+        return sprintRepository.findByProjectId(projectId);
+    }
+
+    public String getProjectNameBySprintId(Long sprintId) {
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(() -> new EntityNotFoundException("Sprint not found"));
+        Project project = projectService.getById(sprint.getProjectId());
+        if (project == null) {
+            throw new EntityNotFoundException("Project not found");
+        }
+        return project.getName();
     }
 }

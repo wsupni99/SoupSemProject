@@ -41,8 +41,8 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public void update(Long id, Permission updated) {
-        Permission existing = getById(id);
+    public void update(Permission updated) {
+        Permission existing = getById(updated.getPermissionId());
         existing.setPermissionName(updated.getPermissionName());
         existing.setDescription(updated.getDescription());
         permissionRepository.save(existing);

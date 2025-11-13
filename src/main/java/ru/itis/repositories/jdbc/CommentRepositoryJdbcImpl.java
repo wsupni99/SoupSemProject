@@ -80,7 +80,7 @@ public class CommentRepositoryJdbcImpl implements CommentRepository {
     }
 
     @Override
-    public void update(Long projectId, Comment comment) {
+    public void update(Comment comment) {
         try (Connection conn = DBUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setLong(1, comment.getTaskId());

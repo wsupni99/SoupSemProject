@@ -8,6 +8,6 @@ public interface CommentService {
     void create(Comment comment);
     Comment getById(Long id);
     List<Comment> getAll();
-    void update(Long id, Comment updated);
+    void update(Comment updated);
     void delete(Long id);
 }

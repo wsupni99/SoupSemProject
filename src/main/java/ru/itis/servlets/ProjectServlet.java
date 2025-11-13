@@ -39,7 +39,7 @@ public class ProjectServlet extends HttpServlet {
         } else if (uri.equals(req.getContextPath() + "/project/new") || uri.equals("/project/new")) {
             req.setAttribute("statuses", STATUSES);
             req.setAttribute("managers", userService.getAllManagers());
-            req.getRequestDispatcher("/WEB-INF/jsp/projectForm.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/projectNew.jsp").forward(req, resp);
         } else if (uri.startsWith(req.getContextPath() + "/project/edit") || uri.startsWith("/project/edit")) {
             long id = Long.parseLong(req.getParameter("id"));
             Project project = projectService.getById(id);
@@ -54,7 +54,7 @@ public class ProjectServlet extends HttpServlet {
             req.setAttribute("statuses", STATUSES);
             req.setAttribute("managers", userService.getAllManagers());
 
-            req.getRequestDispatcher("/WEB-INF/jsp/editProject.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/projectEdit.jsp").forward(req, resp);
         }
 
     }
@@ -122,7 +122,7 @@ public class ProjectServlet extends HttpServlet {
         updated.setManagerId(Long.parseLong(req.getParameter("managerId")));
 
         try {
-            projectService.update(id, updated);
+            projectService.update(updated);
             resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
         } catch (EntityNotFoundException e) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Ошибка: проект не найден");
