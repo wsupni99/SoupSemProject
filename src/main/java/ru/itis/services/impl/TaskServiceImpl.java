@@ -64,16 +64,17 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> getFilteredTasks(Map<String, String[]> parameterMap) {
         String projectId = getParam(parameterMap, "project_id");
         String userId = getParam(parameterMap, "user_id");
-        String status = getParam(parameterMap, "status");
         String sprintId = getParam(parameterMap, "sprint_id");
+        String status = getParam(parameterMap, "status");
 
         return taskRepository.findWithFilters(
-                projectId != null ? Long.parseLong(projectId) : null,
-                userId != null ? Long.parseLong(userId) : null,
-                status,
-                sprintId != null ? Long.parseLong(sprintId) : null
+                (projectId != null && !projectId.isEmpty()) ? Long.parseLong(projectId) : null,
+                (userId != null && !userId.isEmpty()) ? Long.parseLong(userId) : null,
+                status != null && !status.isEmpty() ? status : null,
+                (sprintId != null && !sprintId.isEmpty()) ? Long.parseLong(sprintId) : null
         );
     }
+
 
     @Override
     public String getParam(Map<String, String[]> map, String key) {

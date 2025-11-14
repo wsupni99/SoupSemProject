@@ -7,6 +7,9 @@ import java.util.List;
 public interface CommentService {
     void create(Comment comment);
     Comment getById(Long id);
+
+    List<Comment> getByTaskId(Long taskId);
+
     List<Comment> getAll();
     void update(Comment updated);
     void delete(Long id);

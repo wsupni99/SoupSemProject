@@ -53,8 +53,41 @@
         </c:forEach>
     </select>
 
-    <br><input type="submit" value="Сохранить">
+    <br>
+    <input type="submit" value="Сохранить">
+    <input type="button" value="Назад" onclick="history.back();">
+
 </form>
+
+<h3>Комментарии</h3>
+<c:if test="${empty comments}">
+    <p>Нет комментариев</p>
+</c:if>
+<ul>
+    <c:forEach var="comment" items="${comments}">
+        <li>
+            <p>
+                <b>
+                    <c:forEach var="user" items="${users}">
+                        <c:if test="${user.userId == comment.userId}">
+                            ${user.name}
+                        </c:if>
+                    </c:forEach>
+                </b> (${comment.createdAt})
+            </p>
+            <p>${comment.text}</p>
+        </li>
+    </c:forEach>
+</ul>
+
+<h3>Добавить комментарий</h3>
+<form method="post" action="${pageContext.request.contextPath}/task/addComment">
+    <input type="hidden" name="taskId" value="${task.taskId}">
+    <textarea name="text" required placeholder="Текст комментария"></textarea><br>
+    <input type="submit" value="Добавить комментарий">
+</form>
+
+
 
 <script>
     document.getElementById('parentTaskId').addEventListener('input', function () {

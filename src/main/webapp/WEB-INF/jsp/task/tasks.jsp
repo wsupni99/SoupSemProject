@@ -1,30 +1,92 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Задачи</title>
     <meta charset="UTF-8">
+    <title>Создание задачи</title>
 </head>
 <body>
-    <p><a href="${pageContext.request.contextPath}/home">На главную</a>
-        <a href="${pageContext.request.contextPath}/task/new">Создать задачу</a>
-    </p>
-    <h2>Список задач</h2>
-    <table>
-        <tr><th>ID</th><th>Имя</th><th>Проект</th><th>Пользователь</th><th>Статус</th></tr>
-        <c:forEach var="task" items="${tasks}">
-            <tr>
-                <td>${task.taskId}</td>
-                <td>
-                    <a href="${pageContext.request.contextPath}/task/edit?id=${task.taskId}">
-                            ${task.name}
-                    </a>
-                </td>
-                <td>${task.projectId}</td>
-                <td>${task.userId}</td>
-                <td>${task.status}</td>
-            </tr>
+<form method="get" action="${pageContext.request.contextPath}/tasks">
+    <select name="user_id">
+        <option value="">Все пользователи</option>
+        <c:forEach var="user" items="${users}">
+            <option value="${user.userId}" <c:if test="${param.user_id == user.userId}">selected</c:if>>
+                    ${user.name}
+            </option>
         </c:forEach>
-    </table>
+    </select>
+
+    <select name="project_id">
+        <option value="">Все проекты</option>
+        <c:forEach var="project" items="${projects}">
+            <option value="${project.projectId}" <c:if test="${param.project_id == project.projectId}">selected</c:if>>
+                    ${project.name}
+            </option>
+        </c:forEach>
+    </select>
+
+    <select name="sprint_id">
+        <option value="">Все спринты</option>
+        <c:forEach var="sprint" items="${sprints}">
+            <option value="${sprint.sprintId}" <c:if test="${param.sprint_id == sprint.sprintId}">selected</c:if>>
+                    ${sprint.name}
+            </option>
+        </c:forEach>
+    </select>
+
+    <select name="status">
+        <option value="">Все статусы</option>
+        <option value="новая" <c:if test="${param.status == 'новая'}">selected</c:if>>новая</option>
+        <option value="в работе" <c:if test="${param.status == 'в работе'}">selected</c:if>>в работе</option>
+        <option value="готова" <c:if test="${param.status == 'готова'}">selected</c:if>>готова</option>
+        <option value="отложена" <c:if test="${param.status == 'отложена'}">selected</c:if>>отложена</option>
+        <option value="тест" <c:if test="${param.status == 'тест'}">selected</c:if>>тест</option>
+    </select>
+
+    <input type="submit" value="Применить фильтры" />
+</form>
+
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Имя</th>
+        <th>Проект</th>
+        <th>Пользователь</th>
+        <th>Спринт</th>
+        <th>Статус</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <c:forEach var="task" items="${tasks}">
+        <tr>
+            <td>${task.taskId}</td>
+            <td>${task.name}</td>
+            <td>
+                <c:forEach var="project" items="${projects}">
+                    <c:if test="${project.projectId == task.projectId}">${project.name}</c:if>
+                </c:forEach>
+            </td>
+            <td>
+                <c:forEach var="user" items="${users}">
+                    <c:if test="${user.userId == task.userId}">${user.name}</c:if>
+                </c:forEach>
+            </td>
+            <td>
+                <c:forEach var="sprint" items="${sprints}">
+                    <c:if test="${sprint.sprintId == task.sprintId}">${sprint.name}</c:if>
+                </c:forEach>
+            </td>
+            <td>${task.status}</td>
+            <td>
+                <a href="${pageContext.request.contextPath}/task/edit?id=${task.taskId}">Редактировать</a>
+                <a href="${pageContext.request.contextPath}/task/delete?id=${task.taskId}" onclick="return confirm('Удалить задачу?');">Удалить</a>
+            </td>
+        </tr>
+    </c:forEach>
+    </tbody>
+</table>
+
 </body>
 </html>

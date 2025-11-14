@@ -6,12 +6,11 @@ import ru.itis.exceptions.EntityNotFoundException;
 import ru.itis.exceptions.InvalidDataException;
 import ru.itis.exceptions.PermissionDeniedException;
 import ru.itis.exceptions.ProjectNotEmptyException;
-import ru.itis.repositories.jdbc.SprintRepositoryJdbcImpl;
-import ru.itis.repositories.jdbc.TaskRepositoryJdbcImpl;
-import ru.itis.repositories.jdbc.UserRepositoryJdbcImpl;
+import ru.itis.repositories.jdbc.*;
+import ru.itis.services.impl.CommentServiceImpl;
 import ru.itis.services.impl.ProjectServiceImpl;
-import ru.itis.repositories.jdbc.ProjectRepositoryJdbcImpl;
 import ru.itis.services.impl.UserServiceImpl;
+import ru.itis.services.interfaces.CommentService;
 import ru.itis.services.interfaces.ProjectService;
 import ru.itis.services.interfaces.UserService;
 

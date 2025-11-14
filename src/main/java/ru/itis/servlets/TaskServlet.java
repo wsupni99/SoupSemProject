@@ -1,19 +1,10 @@
 package ru.itis.servlets;
 
-import ru.itis.entities.Project;
-import ru.itis.entities.Task;
-import ru.itis.entities.Sprint;
-import ru.itis.entities.User;
+import ru.itis.entities.*;
 import ru.itis.exceptions.*;
 import ru.itis.repositories.jdbc.*;
-import ru.itis.services.impl.ProjectServiceImpl;
-import ru.itis.services.impl.SprintServiceImpl;
-import ru.itis.services.impl.TaskServiceImpl;
-import ru.itis.services.impl.UserServiceImpl;
-import ru.itis.services.interfaces.ProjectService;
-import ru.itis.services.interfaces.SprintService;
-import ru.itis.services.interfaces.TaskService;
-import ru.itis.services.interfaces.UserService;
+import ru.itis.services.impl.*;
+import ru.itis.services.interfaces.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,13 +13,13 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
-//TODO: Добавить удаление задач. Добавить фильтры. Сделать читаемые поля.
+//TODO: Мб убрать айди в /tasks
 
 @WebServlet(
         name = "TaskServlet",
         urlPatterns = {
                 "/tasks", "/task/new", "/task/chooseProject", "/task/newWithProject",
-                "/task/create", "/task/edit", "/task/update"
+                "/task/create", "/task/edit", "/task/update", "/task/delete", "/task/addComment"
         }
 )
 public class TaskServlet extends HttpServlet {
@@ -38,6 +29,8 @@ public class TaskServlet extends HttpServlet {
             new SprintRepositoryJdbcImpl(), projectService);
     private final TaskService taskService = new TaskServiceImpl(new TaskRepositoryJdbcImpl());
     private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
+    private final CommentService commentService = new CommentServiceImpl(new CommentRepositoryJdbcImpl());
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,7 +40,14 @@ public class TaskServlet extends HttpServlet {
 
         if ("/tasks".equals(path)) {
             List<Task> tasks = taskService.getFilteredTasks(req.getParameterMap());
+            List<User> users = userService.getAllUsers();
+            List<Project> projects = projectService.getAll();
+            List<Sprint> sprints = sprintService.getAll();
+
             req.setAttribute("tasks", tasks);
+            req.setAttribute("users", users);
+            req.setAttribute("projects", projects);
+            req.setAttribute("sprints", sprints);
             req.getRequestDispatcher("/WEB-INF/jsp/task/tasks.jsp").forward(req, resp);
             return;
         }
@@ -84,7 +84,6 @@ public class TaskServlet extends HttpServlet {
             Task task = taskService.getById(taskId);
             List<Sprint> sprints = sprintService.getByProjectId(task.getProjectId());
             List<User> users = userService.getAllUsers();
-
             String taskUserName = "";
             for (User user : users) {
                 if (user.getUserId().equals(task.getUserId())){
@@ -92,14 +91,42 @@ public class TaskServlet extends HttpServlet {
                     break;
                 }
             }
-
+            List<Comment> comments = commentService.getByTaskId(taskId);
             req.setAttribute("task", task);
             req.setAttribute("sprints", sprints);
             req.setAttribute("users", users);
             req.setAttribute("taskUserName", taskUserName);
+            req.setAttribute("comments", comments);
 
             req.getRequestDispatcher("/WEB-INF/jsp/task/taskEditForm.jsp").forward(req, resp);
         }
+
+        if ("/task/delete".equals(path)) {
+            String idStr = req.getParameter("id");
+            if (idStr == null || idStr.isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Нет id задачи");
+                return;
+            }
+            Long id = Long.parseLong(idStr);
+            taskService.delete(id);
+            resp.sendRedirect(req.getContextPath() + "/tasks");
+        }
+
+        if ("/task/addComment".equals(path)) {
+            req.setCharacterEncoding("UTF-8");
+            String text = req.getParameter("text");
+            Long taskId = Long.parseLong(req.getParameter("taskId"));
+
+            Comment comment = new Comment();
+            comment.setTaskId(taskId);
+            comment.setText(text);
+            comment.setCreatedAt(new Date(System.currentTimeMillis()));
+
+            commentService.create(comment);
+            resp.sendRedirect(req.getContextPath() + "/task/edit?id=" + taskId);
+            return;
+        }
+
     }
 
     @Override
@@ -186,6 +213,25 @@ public class TaskServlet extends HttpServlet {
             } catch (PermissionDeniedException e) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
             }
+            return;
+        }
+        if ("/task/addComment".equals(path)) {
+            req.setCharacterEncoding("UTF-8");
+            String text = req.getParameter("text");
+            Long taskId = Long.parseLong(req.getParameter("taskId"));
+            //TODO
+            // HARDCODE для userId (например, самый первый пользователь)
+            Long userId = 1L;
+
+            Comment comment = new Comment();
+            comment.setTaskId(taskId);
+            comment.setUserId(userId);
+            comment.setText(text);
+            comment.setCreatedAt(new Date(System.currentTimeMillis()));
+
+            commentService.create(comment);
+            resp.sendRedirect(req.getContextPath() + "/task/edit?id=" + taskId);
+            return;
         }
     }
 }

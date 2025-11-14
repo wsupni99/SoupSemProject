@@ -25,6 +25,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public List<Comment> getByTaskId(Long taskId) {
+        return commentRepository.findByTaskId(taskId);
+    }
+
+
+    @Override
     public List<Comment> getAll() {
         return commentRepository.findAll();
     }
