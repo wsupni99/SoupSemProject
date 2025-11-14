@@ -19,13 +19,14 @@
             <option>завершён</option>
         </select>
     </label>
+    <br>
     <label>Менеджер:
         <select name="managerId">
             <c:forEach var="manager" items="${managers}">
                 <option value="${manager.userId}">${manager.name}</option>
             </c:forEach>
         </select>
-    </label><br><br>
+    </label><br>
     <button type="submit">Создать</button>
 </form>
 <br>

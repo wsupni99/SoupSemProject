@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 
+//TODO: Добавить удаление задач. Добавить фильтры. Сделать читаемые поля.
+
 @WebServlet(
         name = "TaskServlet",
         urlPatterns = {
@@ -46,14 +48,14 @@ public class TaskServlet extends HttpServlet {
         if ("/tasks".equals(path)) {
             List<Task> tasks = taskService.getFilteredTasks(req.getParameterMap());
             req.setAttribute("tasks", tasks);
-            req.getRequestDispatcher("/WEB-INF/jsp/tasks.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/task/tasks.jsp").forward(req, resp);
             return;
         }
 
         if ("/task/new".equals(path)) {
             List<Project> projects = projectService.getAll();
             req.setAttribute("projects", projects);
-            req.getRequestDispatcher("/WEB-INF/jsp/taskChooseProject.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/task/taskChooseProject.jsp").forward(req, resp);
             return;
         }
 
@@ -69,7 +71,7 @@ public class TaskServlet extends HttpServlet {
             List<Sprint> sprints = sprintService.getByProjectId(projectId);
             req.setAttribute("projectId", projectId);
             req.setAttribute("sprints", sprints);
-            req.getRequestDispatcher("/WEB-INF/jsp/taskNewForm.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/task/taskNewForm.jsp").forward(req, resp);
             return;
         }
 
@@ -96,7 +98,7 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("users", users);
             req.setAttribute("taskUserName", taskUserName);
 
-            req.getRequestDispatcher("/WEB-INF/jsp/taskEditForm.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/task/taskEditForm.jsp").forward(req, resp);
         }
     }
 
@@ -114,7 +116,6 @@ public class TaskServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/task/newWithProject?id=" + projectId);
             return;
         }
-
         if ("/task/create".equals(path)) {
             try {
                 Task task = new Task();

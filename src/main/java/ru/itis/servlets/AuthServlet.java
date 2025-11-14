@@ -20,7 +20,7 @@ public class AuthServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = req.getRequestURI();
         if (uri.endsWith("/login")) {
-            req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(req, resp);
         } else if (uri.endsWith("/logout")) {
             req.getSession().invalidate();
             resp.sendRedirect(req.getContextPath() + "/login");
@@ -38,11 +38,11 @@ public class AuthServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/projects");
             } else {
                 req.setAttribute("error", "Invalid username or password");
-                req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
+                req.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(req, resp);
             }
         } catch (EntityNotFoundException e) {
             req.setAttribute("error", "The user was not found");
-            req.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(req, resp);
         }
     }
 }

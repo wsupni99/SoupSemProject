@@ -1,7 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
-<head><title>Выбор проекта</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор проекта</title>
+</head>
 <body>
 <form action="${pageContext.request.contextPath}/task/chooseProject" method="post">
     <label for="projectId">Проект:</label>

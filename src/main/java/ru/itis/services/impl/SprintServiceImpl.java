@@ -35,13 +35,8 @@ public class SprintServiceImpl implements SprintService {
     }
 
     @Override
-    public void update(Sprint updated) {
-        Sprint existing = getById(updated.getSprintId());
-        existing.setProjectId(updated.getProjectId());
-        existing.setName(updated.getName());
-        existing.setStartDate(updated.getStartDate());
-        existing.setEndDate(updated.getEndDate());
-        sprintRepository.save(existing);
+    public void update(Sprint sprint) {
+        sprintRepository.update(sprint);
     }
 
     @Override
