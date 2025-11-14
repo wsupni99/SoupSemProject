@@ -54,6 +54,7 @@ public class SprintServiceImpl implements SprintService {
         return sprintRepository.findByProjectId(projectId);
     }
 
+    @Override
     public String getProjectNameBySprintId(Long sprintId) {
         Sprint sprint = sprintRepository.findById(sprintId)
                 .orElseThrow(() -> new EntityNotFoundException("Sprint not found"));

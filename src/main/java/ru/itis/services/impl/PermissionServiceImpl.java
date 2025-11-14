@@ -53,7 +53,6 @@ public class PermissionServiceImpl implements PermissionService {
         permissionRepository.deleteById(id);
     }
 
-    // Функционал для проверки доступа
     @Override
     public boolean hasPermission(Long userId, String permissionName) {
         List<UserRole> roles = userRoleRepository.findByUserId(userId);

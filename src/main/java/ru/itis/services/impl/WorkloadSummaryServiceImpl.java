@@ -39,7 +39,6 @@ public class WorkloadSummaryServiceImpl implements WorkloadSummaryService {
         summary.setSprintId(sprintId);
         summary.setOpenTasksCount(openCount);
         summary.setClosedTasksCount(closedCount);
-
         return summary;
     }
 }

@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBUtil {
-    private static final String URL = "jdbc:postgresql://localhost:5432/bd_semestr?charSet=UTF8";
+    private static final String URL = "jdbc:postgresql://localhost:5432/bd_semestr?charSet=UTF8"; // Кодировка на всякий случай
     private static final String USER = "postgres";
     private static final String PASSWORD = "0044";
     public static Connection getConnection() throws SQLException {

@@ -19,7 +19,6 @@ public class UserRoleServiceImpl implements UserRoleService {
         this.roleRepository = roleRepository;
     }
 
-
     @Override
     public void create(UserRole userRole) {
         userRoleRepository.save(userRole);
@@ -48,6 +47,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         userRoleRepository.deleteById(id);
     }
 
+    @Override
     public boolean isAdmin(Long userId) {
         List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
         for (UserRole ur : userRoles) {

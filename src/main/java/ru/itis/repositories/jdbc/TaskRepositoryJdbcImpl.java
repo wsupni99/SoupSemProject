@@ -204,6 +204,7 @@ public class TaskRepositoryJdbcImpl implements TaskRepository {
         }
     }
 
+    @Override
     public List<Task> findWithFilters(Long projectId, Long userId, String status, Long sprintId) {
         List<Object> params = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM project.tasks WHERE 1=1");

@@ -6,14 +6,9 @@ import java.util.List;
 
 public interface UserRoleService {
     void create(UserRole userRole);
-
     UserRole getById(Long userId, Long roleId);
-
     List<UserRole> getAll();
-
     void update(UserRole updated);
-
     void delete(Long userId, Long roleId);
-
     boolean isAdmin(Long userId);
 }

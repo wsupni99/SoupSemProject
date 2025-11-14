@@ -92,6 +92,7 @@ public class RolePermissionRepositoryJdbcImpl implements RolePermissionRepositor
 
     @Override
     public void update(RolePermission rp) {
+        // Если что - создать нового пользователя с нужной ролью
         throw new UnsupportedOperationException("Операция update для таблиц с составным ключом не поддерживается");
     }
 }
