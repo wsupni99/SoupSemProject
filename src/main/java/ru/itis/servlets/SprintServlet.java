@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//TODO: ОШИБКА УДАЛЕНИЯ
-
 @WebServlet({
         "/sprints",
         "/sprint/edit",
@@ -70,9 +68,7 @@ public class SprintServlet extends HttpServlet {
 
         if ("/sprint/edit".equals(path)) {
             String idStr = req.getParameter("id");
-
             if (idStr == null || idStr.isEmpty()) {
-                resp.sendError(400, "Нет id спринта");
                 return;
             }
             Long id = Long.parseLong(idStr);
@@ -112,14 +108,22 @@ public class SprintServlet extends HttpServlet {
         }
         if ("/sprint/delete".equals(path)) {
             try {
-                Long sprintId = Long.valueOf(req.getParameter("id"));
+                String idParam = req.getParameter("id");
+                if (idParam == null || idParam.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Sprint ID not provided");
+                }
+                Long sprintId = Long.parseLong(idParam);
                 sprintService.delete(sprintId);
                 resp.sendRedirect(req.getContextPath() + "/sprints");
+            } catch (NumberFormatException e) {
+                resp.getWriter().write("Invalid ID format");
             } catch (Exception e) {
-                resp.setContentType("text/plain; charset=UTF-8");
-                resp.setCharacterEncoding("UTF-8");
-                resp.setStatus(400);
-                resp.getWriter().write("Нельзя удалить спринт, если к нему привязаны таски");
+                String msg = e.getMessage();
+                if (msg != null && (msg.contains("foreign key") || msg.contains("violates foreign key"))) {
+                    resp.getWriter().write("Cannot delete sprint if tasks are attached to it");
+                } else {
+                    resp.getWriter().write("Sprint deletion error");
+                }
             }
         }
     }

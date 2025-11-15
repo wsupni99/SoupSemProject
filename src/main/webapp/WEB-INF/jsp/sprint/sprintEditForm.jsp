@@ -7,6 +7,7 @@
 </head>
 <body>
 <h2>Редактирование спринта</h2>
+<div id="error-message" style="color: red; display: none;"></div>
 <form action="${pageContext.request.contextPath}/sprint/update" method="post">
     <input type="hidden" name="sprintId" value="${sprint.sprintId}">
     <label>Проект:</label><br>
@@ -33,14 +34,23 @@
         if (!confirm("Удалить спринт?")) return;
         const form = document.getElementById("delete-form");
         const formData = new FormData(form);
+        const params = new URLSearchParams();
+        for (let [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
         fetch(form.action, {
             method: "POST",
-            body: formData
+            body: params,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+            }
         }).then(async resp => {
             if (resp.redirected) {
                 window.location.href = resp.url;
             } else {
-                alert(await resp.text());
+                const errorMsg = document.getElementById("error-message");
+                errorMsg.textContent = await resp.text();
+                errorMsg.style.display = "block";
             }
         });
     }
