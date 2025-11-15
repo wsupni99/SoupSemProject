@@ -1,16 +1,11 @@
 package ru.itis.servlets;
 
 import ru.itis.entities.Project;
-import ru.itis.entities.User;
 import ru.itis.exceptions.EntityNotFoundException;
-import ru.itis.exceptions.InvalidDataException;
-import ru.itis.exceptions.PermissionDeniedException;
 import ru.itis.exceptions.ProjectNotEmptyException;
 import ru.itis.repositories.jdbc.*;
-import ru.itis.services.impl.CommentServiceImpl;
 import ru.itis.services.impl.ProjectServiceImpl;
 import ru.itis.services.impl.UserServiceImpl;
-import ru.itis.services.interfaces.CommentService;
 import ru.itis.services.interfaces.ProjectService;
 import ru.itis.services.interfaces.UserService;
 
@@ -19,13 +14,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.*;
 
-//TODO: имена не отображаются - пофиксить. УДАЛЕНИЕ, СОХРАНЕНИЕ
-
-@WebServlet(name = "ProjectServlet", urlPatterns = {"/projects", "/project/*"})
+@WebServlet({
+        "/projects",
+        "/project/new",
+        "/project/create",
+        "/project/edit",
+        "/project/update",
+        "/project/delete"
+})
 public class ProjectServlet extends HttpServlet {
+
     private final ProjectService projectService = new ProjectServiceImpl(new ProjectRepositoryJdbcImpl(), new SprintRepositoryJdbcImpl(), new TaskRepositoryJdbcImpl());
     private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
     private static final List<String> STATUSES = Arrays.asList("активен", "на паузе", "завершён");
@@ -33,147 +33,161 @@ public class ProjectServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        String uri = req.getRequestURI();
-
-        if (uri.equals(req.getContextPath() + "/projects") || uri.equals("/projects")) {
+        String path = req.getServletPath();
+        if ("/projects".equals(path)) {
             List<Project> list = projectService.getAll();
+            Map<Long, String> managerNames = new HashMap<>();
+            for (Project project : list) {
+                Long managerId = project.getManagerId();
+                userService.getUserById(managerId).ifPresent(user -> managerNames.put(managerId, user.getName()));
+            }
             req.setAttribute("projects", list);
+            req.setAttribute("managerNames", managerNames);
             req.getRequestDispatcher("/WEB-INF/jsp/project/projects.jsp").forward(req, resp);
+            return;
         }
-
-        if (uri.equals(req.getContextPath() + "/project/new") || uri.equals("/project/new")) {
+        if ("/project/new".equals(path)) {
             req.setAttribute("statuses", STATUSES);
             req.setAttribute("managers", userService.getAllManagers());
             req.getRequestDispatcher("/WEB-INF/jsp/project/projectNewForm.jsp").forward(req, resp);
+            return;
         }
-
-        if (uri.startsWith(req.getContextPath() + "/project/edit") || uri.startsWith("/project/edit")) {
-            long id = Long.parseLong(req.getParameter("id"));
-            Project project = projectService.getById(id);
-
-            req.setAttribute("projectId", project.getProjectId());
-            req.setAttribute("projectName", project.getName());
-            req.setAttribute("projectDescription", project.getDescription());
-            req.setAttribute("projectStartDate", project.getStartDate());
-            req.setAttribute("projectEndDate", project.getEndDate());
-            req.setAttribute("projectStatus", project.getStatus());
-            req.setAttribute("projectManagerId", project.getManagerId());
-            req.setAttribute("statuses", STATUSES);
-            req.setAttribute("managers", userService.getAllManagers());
-
-            req.getRequestDispatcher("/WEB-INF/jsp/project/projectEditForm.jsp").forward(req, resp);
+        if ("/project/edit".equals(path)) {
+            String idParam = req.getParameter("id");
+            if (idParam == null || idParam.trim().isEmpty()) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Project ID not provided");
+                return;
+            }
+            try {
+                long id = Long.parseLong(idParam);
+                Project project = projectService.getById(id);
+                req.setAttribute("projectId", project.getProjectId());
+                req.setAttribute("projectName", project.getName());
+                req.setAttribute("projectDescription", project.getDescription());
+                req.setAttribute("projectStartDate", project.getStartDate() != null ? project.getStartDate().toString() : "");
+                req.setAttribute("projectEndDate", project.getEndDate() != null ? project.getEndDate().toString() : "");
+                req.setAttribute("projectStatus", project.getStatus());
+                req.setAttribute("projectManagerId", project.getManagerId());
+                req.setAttribute("managers", userService.getAllManagers());
+                req.getRequestDispatcher("/WEB-INF/jsp/project/projectEditForm.jsp").forward(req, resp);
+            } catch (NumberFormatException e) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid project ID format");
+            } catch (EntityNotFoundException e) {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Project not found");
+            }
+            return;
         }
+        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        String uri = req.getRequestURI();
-
-        if (uri.equals(req.getContextPath() + "/projects") || uri.equals("/projects")) {
-            // Имена менеджеров
+        String path = req.getServletPath();
+        if ("/project/create".equals(path)) {
+            String name = req.getParameter("name");
+            String description = req.getParameter("description");
+            String startDateStr = req.getParameter("startDate");
+            String endDateStr = req.getParameter("endDate");
+            String status = req.getParameter("status");
+            String managerIdParam = req.getParameter("managerId");
+            if (name == null || name.trim().isEmpty() || startDateStr == null || startDateStr.trim().isEmpty() ||
+                    endDateStr == null || endDateStr.trim().isEmpty() || status == null || status.trim().isEmpty() ||
+                    managerIdParam == null || managerIdParam.trim().isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().write("Required fields not provided");
+                return;
+            }
+            try {
+                Date startDate = Date.valueOf(startDateStr);
+                Date endDate = Date.valueOf(endDateStr);
+                long managerId = Long.parseLong(managerIdParam);
+                Project project = new Project();
+                project.setName(name.trim());
+                project.setDescription(description != null ? description.trim() : "");
+                project.setStartDate(startDate);
+                project.setEndDate(endDate);
+                project.setStatus(status.trim());
+                project.setManagerId(managerId);
+                projectService.create(project);
+                resp.sendRedirect(req.getContextPath() + "/projects");
+            } catch (Exception e) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resp.getWriter().write("Creation failed: " + e.getMessage());
+            }
+            return;
+        }
+        if ("/project/update".equals(path)) {
+            String idParam = req.getParameter("id");
+            String name = req.getParameter("name");
+            String description = req.getParameter("description");
+            String startDateStr = req.getParameter("startDate");
+            String endDateStr = req.getParameter("endDate");
+            String status = req.getParameter("status");
+            String managerIdParam = req.getParameter("managerId");
+            if (idParam == null || idParam.trim().isEmpty() || name == null || name.trim().isEmpty() ||
+                    startDateStr == null || startDateStr.trim().isEmpty() || endDateStr == null || endDateStr.trim().isEmpty() ||
+                    status == null || status.trim().isEmpty() || managerIdParam == null || managerIdParam.trim().isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().write("Required fields not provided");
+                return;
+            }
+            try {
+                long id = Long.parseLong(idParam);
+                Date startDate = Date.valueOf(startDateStr);
+                Date endDate = Date.valueOf(endDateStr);
+                long managerId = Long.parseLong(managerIdParam);
+                Project project = new Project();
+                project.setProjectId(id);
+                project.setName(name.trim());
+                project.setDescription(description != null ? description.trim() : "");
+                project.setStartDate(startDate);
+                project.setEndDate(endDate);
+                project.setStatus(status.trim());
+                project.setManagerId(managerId);
+                projectService.update(project);
+                resp.sendRedirect(req.getContextPath() + "/projects");
+            } catch (Exception e) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resp.getWriter().write("Update failed: " + e.getMessage());
+            }
+            return;
+        }
+        if ("/project/delete".equals(path)) {
+            String idParam = req.getParameter("id");
+            if (idParam == null || idParam.trim().isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                resp.getWriter().write("Project ID not provided");
+                return;
+            }
+            try {
+                long id = Long.parseLong(idParam);
+                projectService.delete(id);
+                resp.sendRedirect(req.getContextPath() + "/projects");
+            } catch (ProjectNotEmptyException e) {
+                resp.setStatus(HttpServletResponse.SC_CONFLICT);
+                resp.getWriter().write("Cannot delete project if sprints or tasks are attached to it");
+            } catch (EntityNotFoundException e) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                resp.getWriter().write("Project not found");
+            } catch (Exception e) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resp.getWriter().write("Project deletion error");
+            }
+            return;
+        }
+        if ("/projects".equals(path)) {
             List<Project> list = projectService.getAll();
             Map<Long, String> managerNames = new HashMap<>();
             for (Project project : list) {
                 Long managerId = project.getManagerId();
-                Optional<User> managerOpt = userService.getUserById(managerId);
-                // Если менеджера нет, подставляем "-"
-                String managerName = managerOpt.map(User::getName).orElse("-");
-                managerNames.put(managerId, managerName);
+                userService.getUserById(managerId).ifPresent(user -> managerNames.put(managerId, user.getName()));
             }
             req.setAttribute("projects", list);
             req.setAttribute("managerNames", managerNames);
-
             req.getRequestDispatcher("/WEB-INF/jsp/project/projects.jsp").forward(req, resp);
             return;
         }
-
-        if (uri.equals(req.getContextPath() + "/project/update") || uri.equals("/project/update")) {
-            Project project = new Project();
-            project.setProjectId(Long.parseLong(req.getParameter("id")));
-            project.setName(req.getParameter("name"));
-            project.setDescription(req.getParameter("description"));
-            try {
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
-                project.setStartDate(sdf.parse(req.getParameter("startDate")));
-                project.setEndDate(sdf.parse(req.getParameter("endDate")));
-            } catch (Exception e) {
-                throw new ServletException("Ошибка парсинга даты", e);
-            }
-            project.setStatus(req.getParameter("status"));
-            project.setManagerId(Long.valueOf(req.getParameter("managerId")));
-
-            projectService.update(project);
-
-            resp.sendRedirect(req.getContextPath() + "/projects");
-            return;
-        }
-
-        if (uri.equals(req.getContextPath() + "/project/new") || uri.equals("/project/new")) {
-            Project project = new Project();
-            project.setName(req.getParameter("name"));
-            project.setDescription(req.getParameter("description"));
-            try {
-                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
-                project.setStartDate(sdf.parse(req.getParameter("startDate")));
-                project.setEndDate(sdf.parse(req.getParameter("endDate")));
-            } catch (Exception e) {
-                throw new ServletException("Ошибка парсинга даты", e);
-            }
-            project.setStatus(req.getParameter("status"));
-            project.setManagerId(Long.valueOf(req.getParameter("managerId")));
-
-            projectService.create(project);
-
-            resp.sendRedirect(req.getContextPath() + "/projects");
-        }
-
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        String uri = req.getRequestURI();
-        try {
-            String[] parts = uri.split("/");
-            long id = Long.parseLong(parts[parts.length - 1]);
-
-            projectService.delete(id);
-            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } catch (ProjectNotEmptyException e) {
-            resp.sendError(HttpServletResponse.SC_CONFLICT, e.getMessage());
-        } catch (EntityNotFoundException e) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Ошибка: проект не найден");
-        } catch (Exception e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ошибка удаления: " + e.getMessage());
-        }
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-        String uri = req.getRequestURI();
-        String[] parts = uri.split("/");
-        long id = Long.parseLong(parts[parts.length - 1]);
-
-        Project updated = new Project();
-        updated.setName(req.getParameter("name"));
-        updated.setDescription(req.getParameter("description"));
-        updated.setStartDate(Date.valueOf(req.getParameter("startDate")));
-        updated.setEndDate(Date.valueOf(req.getParameter("endDate")));
-        updated.setStatus(req.getParameter("status"));
-        updated.setManagerId(Long.parseLong(req.getParameter("managerId")));
-
-        try {
-            projectService.update(updated);
-            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        } catch (EntityNotFoundException e) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Ошибка: проект не найден");
-        } catch (InvalidDataException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Некорректные данные: " + e.getMessage());
-        } catch (Exception e) {
-            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ошибка обновления: " + e.getMessage());
-        }
-        resp.sendRedirect(req.getContextPath() + "/projects");
+        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 }
