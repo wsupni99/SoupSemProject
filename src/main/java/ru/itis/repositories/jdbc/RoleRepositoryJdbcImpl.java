@@ -17,6 +17,7 @@ public class RoleRepositoryJdbcImpl implements RoleRepository {
     private static final String SQL_INSERT = "INSERT INTO core.roles (role_name, description) VALUES (?, ?)";
     private static final String SQL_UPDATE = "UPDATE core.roles SET role_name=?, description=? WHERE role_id=?";
     private static final String SQL_DELETE = "DELETE FROM core.roles WHERE role_id=?";
+    private static final String SQL_FIND_BY_NAME = "SELECT * FROM core.roles WHERE role_name = ?";
 
     @Override
     public List<Role> findAll() {
@@ -82,5 +83,20 @@ public class RoleRepositoryJdbcImpl implements RoleRepository {
         } catch (SQLException e) {
             throw new InvalidDataException(e.getMessage());
         }
+    }
+
+    @Override
+    public Optional<Role> findByName(String name) {
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(SQL_FIND_BY_NAME)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return Optional.of(RoleMapper.map(rs));
+            }
+        } catch (SQLException e) {
+            throw new InvalidDataException(e.getMessage());
+        }
+        return Optional.empty();
     }
 }

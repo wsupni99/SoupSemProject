@@ -58,16 +58,23 @@ public class UserRepositoryJdbcImpl implements UserRepository {
     @Override
     public void save(User user) {
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(SQL_INSERT)) {
+             PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getName());
             ps.setString(2, user.getEmail());
             ps.setString(3, user.getPasswordHash());
             ps.setString(4, user.getContactInfo());
             ps.executeUpdate();
+
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    user.setUserId(rs.getLong(1));
+                }
+            }
         } catch (SQLException e) {
             throw new InvalidDataException(e.getMessage());
         }
     }
+
 
     @Override
     public void update(User user) {

@@ -1,40 +1,136 @@
 package ru.itis.servlets;
 
+import ru.itis.entities.Project;
 import ru.itis.entities.User;
+import ru.itis.entities.UserRole;
+import ru.itis.exceptions.EntityNotFoundException;
+import ru.itis.repositories.jdbc.*;
+import ru.itis.services.impl.ProjectServiceImpl;
+import ru.itis.services.impl.RoleServiceImpl;
 import ru.itis.services.impl.UserServiceImpl;
-import ru.itis.repositories.jdbc.UserRepositoryJdbcImpl;
+import ru.itis.services.impl.UserRoleServiceImpl;
+import ru.itis.services.interfaces.ProjectService;
+import ru.itis.services.interfaces.RoleService;
 import ru.itis.services.interfaces.UserService;
+import ru.itis.services.interfaces.UserRoleService;
 import ru.itis.util.PasswordUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
+    private final RoleService roleService = new RoleServiceImpl(new RoleRepositoryJdbcImpl());
     private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
+    private final UserRoleService userRoleService = new UserRoleServiceImpl(new UserRoleRepositoryJdbcImpl(), new RoleRepositoryJdbcImpl());
+    private final ProjectService projectService = new ProjectServiceImpl(new ProjectRepositoryJdbcImpl(), new SprintRepositoryJdbcImpl(), new TaskRepositoryJdbcImpl());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Project> projects = projectService.getAll();
+        req.setAttribute("projects", projects);
         req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String email = req.getParameter("email");
-        String name = req.getParameter("name");
+        req.setCharacterEncoding("UTF-8");
+        String email = req.getParameter("email").trim();
+        String name = req.getParameter("name").trim();
         String password = req.getParameter("password");
+        String roleName = req.getParameter("role");
+        if (roleName != null) {
+            roleName = roleName.trim();
+        }
+        String projectIdStr = req.getParameter("projectId");
+
+        if (roleName == null || roleName.isEmpty()) {
+            req.setAttribute("error", "Select a role");
+            List<Project> projects = projectService.getAll();
+            req.setAttribute("projects", projects);
+            req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+            return;
+        }
+
+        if ("Менеджер".equals(roleName)) {
+            if (projectIdStr == null || projectIdStr.trim().isEmpty()) {
+                req.setAttribute("error", "For manager, select a project");
+                List<Project> projects = projectService.getAll();
+                req.setAttribute("projects", projects);
+                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                return;
+            }
+            try {
+                Long.parseLong(projectIdStr.trim());
+            } catch (NumberFormatException e) {
+                req.setAttribute("error", "Invalid project ID");
+                List<Project> projects = projectService.getAll();
+                req.setAttribute("projects", projects);
+                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                return;
+            }
+        }
+
         try {
+            if (userService.getByEmail(email).isPresent()) {
+                req.setAttribute("error", "Email already registered");
+                List<Project> projects = projectService.getAll();
+                req.setAttribute("projects", projects);
+                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                return;
+            }
+
             User user = new User();
             user.setEmail(email);
             user.setName(name);
-            user.setPasswordHash(PasswordUtil.hash(password)); // пароль захэширован!
+            user.setPasswordHash(PasswordUtil.hash(password));
+            user.setContactInfo("");
             userService.createUser(user);
+
+            Optional<Long> roleIdOpt = roleService.getRoleIdByName(roleName);
+            if (!   roleIdOpt.isPresent()) {
+                req.setAttribute("error", "Invalid role: " + roleName);
+                List<Project> projects = projectService.getAll();
+                req.setAttribute("projects", projects);
+                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                return;
+            }
+            Long roleId = roleIdOpt.get();
+
+            UserRole userRole = new UserRole();
+            userRole.setUserId(user.getUserId());
+            userRole.setRoleId(roleId);
+            userRoleService.create(userRole);
+
+            if ("Менеджер".equals(roleName)) {
+                long projectId = Long.parseLong(projectIdStr.trim());
+                Project project;
+                try {
+                    project = projectService.getById(projectId);
+                } catch (EntityNotFoundException e) {
+                    req.setAttribute("error", "Project not found");
+                    List<Project> projects = projectService.getAll();
+                    req.setAttribute("projects", projects);
+                    req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                    return;
+                }
+                project.setManagerId(user.getUserId());
+                projectService.update(project);
+            }
+
             resp.sendRedirect(req.getContextPath() + "/login");
         } catch (Exception e) {
-            req.setAttribute("error", "Registration Error: " + e.getMessage());
+            req.setAttribute("error", "Registration error: " + e.getMessage());
+            List<Project> projects = projectService.getAll();
+            req.setAttribute("projects", projects);
             req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
         }
     }
+
+
 }
+

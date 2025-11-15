@@ -6,6 +6,7 @@ import ru.itis.repositories.interfaces.RoleRepository;
 import ru.itis.services.interfaces.RoleService;
 
 import java.util.List;
+import java.util.Optional;
 
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
@@ -42,4 +43,10 @@ public class RoleServiceImpl implements RoleService {
     public void delete(Long id) {
         roleRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<Long> getRoleIdByName(String name) {
+        return roleRepository.findByName(name).map(Role::getRoleId);
+    }
+
 }
