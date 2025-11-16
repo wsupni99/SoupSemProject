@@ -13,4 +13,6 @@ public interface UserRoleService {
     boolean isAdmin(Long userId);
 
     void assignRole(Long userId, Long roleId);
+
+    String getRoleNameByUserId(Long userId);
 }

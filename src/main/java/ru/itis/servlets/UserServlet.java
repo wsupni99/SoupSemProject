@@ -1,10 +1,14 @@
 package ru.itis.servlets;
 
 import ru.itis.entities.User;
-import ru.itis.exceptions.EntityNotFoundException;
-import ru.itis.exceptions.InvalidDataException;
+import ru.itis.repositories.jdbc.RoleRepositoryJdbcImpl;
 import ru.itis.repositories.jdbc.UserRepositoryJdbcImpl;
+import ru.itis.repositories.jdbc.UserRoleRepositoryJdbcImpl;
+import ru.itis.services.impl.RoleServiceImpl;
+import ru.itis.services.impl.UserRoleServiceImpl;
 import ru.itis.services.impl.UserServiceImpl;
+import ru.itis.services.interfaces.RoleService;
+import ru.itis.services.interfaces.UserRoleService;
 import ru.itis.services.interfaces.UserService;
 
 import javax.servlet.ServletException;
@@ -13,12 +17,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@WebServlet(name = "UserServlet", urlPatterns = {"/users", "/user/*"})
+@WebServlet({
+        "/users",
+        "/user/delete"
+})
 public class UserServlet extends HttpServlet {
 
     private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
+    private final RoleService roleService = new RoleServiceImpl(new RoleRepositoryJdbcImpl());
+    private final UserRoleService userRoleService = new UserRoleServiceImpl(new UserRoleRepositoryJdbcImpl(), new RoleRepositoryJdbcImpl());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,29 +39,15 @@ public class UserServlet extends HttpServlet {
 
         if ("/users".equals(path)) {
             List<User> users = userService.getAllUsers();
+            Map<Long, String> roleMap = new HashMap<>();
+            for (User user : users) {
+                String roleName = userRoleService.getRoleNameByUserId(user.getUserId());
+                roleMap.put(user.getUserId(), roleName != null ? roleName : "Не назначено");
+            }
             req.setAttribute("users", users);
+            req.setAttribute("roleMap", roleMap);
             req.getRequestDispatcher("/WEB-INF/jsp/user/users.jsp").forward(req, resp);
             return;
-        }
-
-        if (path.startsWith("/user/")) {
-            String idStr = path.substring(path.lastIndexOf("/") + 1);
-            if (idStr == null || idStr.trim().isEmpty()) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "User ID not provided");
-                return;
-            }
-            try {
-                Long id = Long.parseLong(idStr);
-                User user = userService.getUserById(id).orElseThrow(
-                        () -> new EntityNotFoundException("User not found"));
-                req.setAttribute("user", user);
-                req.getRequestDispatcher("/WEB-INF/jsp/profile.jsp").forward(req, resp);
-                return;
-            } catch (NumberFormatException e) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid user ID format");
-            } catch (EntityNotFoundException e) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "User not found");
-            }
         }
 
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -59,44 +56,33 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        resp.setContentType("text/html; charset=UTF-8");
         String path = req.getServletPath();
 
-        if (path.startsWith("/user/")) {
-            String idStr = path.substring(path.lastIndexOf("/") + 1);
-            if (idStr == null || idStr.trim().isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("User ID not provided");
-                return;
-            }
-
+        if ("/user/delete".equals(path)) {
+            resp.setContentType("application/json; charset=UTF-8");
             try {
-                Long id = Long.parseLong(idStr);
-                String name = req.getParameter("name");
-                String email = req.getParameter("email");
-                if (name == null || name.trim().isEmpty() || email == null || email.trim().isEmpty()) {
-                    resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    resp.getWriter().write("Required fields not provided");
-                    return;
+                String idStr = req.getParameter("id");
+                if (idStr == null || idStr.trim().isEmpty()) {
+                    throw new IllegalArgumentException("User ID not provided");
                 }
-
-                User user = new User();
-                user.setUserId(id);
-                user.setName(name.trim());
-                user.setEmail(email.trim());
-                userService.updateUser(user);
-                resp.sendRedirect(req.getContextPath() + "/user/" + id);
-                return;
+                Long id = Long.parseLong(idStr);
+                String currentRole = userRoleService.getRoleNameByUserId(id);
+                if (currentRole != null && !"Не назначено".equals(currentRole)) {
+                    Long roleId = roleService.getRoleIdByName(currentRole).orElse(null);
+                    if (roleId != null) {
+                        userRoleService.delete(id, roleId);
+                    }
+                }
+                userService.deleteUser(id);
+                resp.getWriter().write("{\"success\": true}");
             } catch (NumberFormatException e) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("Invalid user ID format");
-            } catch (EntityNotFoundException | InvalidDataException e) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write(e.getMessage());
+                resp.getWriter().write("{\"success\": false, \"message\": \"Invalid ID format\"}");
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resp.getWriter().write("Update failed: " + e.getMessage());
+                resp.getWriter().write("{\"success\": false, \"message\": \"An error occurred while deleting the user. Please try again.\"}");
             }
+            return;
         }
 
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);

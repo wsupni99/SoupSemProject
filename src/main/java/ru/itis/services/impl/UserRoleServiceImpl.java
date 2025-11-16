@@ -68,4 +68,16 @@ public class UserRoleServiceImpl implements UserRoleService {
         newRole.setRoleId(roleId);
         create(newRole);
     }
+
+    @Override
+    public String getRoleNameByUserId(Long userId) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        if (userRoles.isEmpty()) {
+            return "Не назначено";
+        }
+        Long roleId = userRoles.get(0).getRoleId();
+        return roleRepository.findById(roleId)
+                .map(Role::getRoleName)
+                .orElse("Неизвестно");
+    }
 }
