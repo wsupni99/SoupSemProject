@@ -3,10 +3,10 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <title>Registration</title>
 </head>
 <body>
-<h2>Регистрация</h2>
+<h2>Registration</h2>
 <c:if test="${not empty error}">
     <p style="color: red;">${error}</p>
 </c:if>
@@ -17,22 +17,22 @@
     <label>Email:</label>
     <input type="email" name="email" required><br><br>
 
-    <label>Имя:</label>
+    <label>Name:</label>
     <input type="text" name="name" required><br><br>
 
-    <label>Пароль:</label>
+    <label>Password:</label>
     <input type="password" name="password" required><br><br>
 
-    <label>Роль:</label>
+    <label>Role:</label>
     <select name="role" id="roleSelect" required>
-        <option value="">Выберите роль</option>
-        <option value="Разработчик">Разработчик</option>
-        <option value="Тестировщик">Тестировщик</option>
-        <option value="Менеджер">Менеджер</option>
+        <option value="">Select role</option>
+        <option value="DEVELOPER">Developer</option>
+        <option value="TESTER">Tester</option>
+        <option value="MANAGER">Manager</option>
     </select><br><br>
 
     <div id="projectDiv" style="display: none;">
-        <label>Выберите проект:</label>
+        <label>Select project:</label>
         <select name="projectId">
             <c:forEach var="project" items="${projects}">
                 <option value="${project.projectId}">${project.name}</option>
@@ -40,13 +40,13 @@
         </select><br><br>
     </div>
 
-    <input type="submit" value="Зарегистрироваться">
+    <input type="submit" value="Register">
 </form>
 
 <script>
     document.getElementById('roleSelect').addEventListener('change', function() {
         var projectDiv = document.getElementById('projectDiv');
-        if (this.value === 'Менеджер') {
+        if (this.value === 'MANAGER') {
             projectDiv.style.display = 'block';
         } else {
             projectDiv.style.display = 'none';

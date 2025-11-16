@@ -12,7 +12,12 @@ public interface UserRoleService {
     void delete(Long userId, Long roleId);
     boolean isAdmin(Long userId);
 
+    boolean isManager(Long userId);
+
+    boolean isDeveloper(Long userId);
+
+    boolean isTester(Long userId);
+
     void assignRole(Long userId, Long roleId);
 
-    String getRoleNameByUserId(Long userId);
 }

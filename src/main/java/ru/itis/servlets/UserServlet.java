@@ -1,6 +1,7 @@
 package ru.itis.servlets;
 
 import ru.itis.entities.User;
+import ru.itis.entities.UserRole;
 import ru.itis.repositories.jdbc.RoleRepositoryJdbcImpl;
 import ru.itis.repositories.jdbc.UserRepositoryJdbcImpl;
 import ru.itis.repositories.jdbc.UserRoleRepositoryJdbcImpl;
@@ -30,6 +31,7 @@ public class UserServlet extends HttpServlet {
     private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
     private final RoleService roleService = new RoleServiceImpl(new RoleRepositoryJdbcImpl());
     private final UserRoleService userRoleService = new UserRoleServiceImpl(new UserRoleRepositoryJdbcImpl(), new RoleRepositoryJdbcImpl());
+    private final UserRoleRepositoryJdbcImpl userRoleRepository = new UserRoleRepositoryJdbcImpl();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -41,8 +43,20 @@ public class UserServlet extends HttpServlet {
             List<User> users = userService.getAllUsers();
             Map<Long, String> roleMap = new HashMap<>();
             for (User user : users) {
-                String roleName = userRoleService.getRoleNameByUserId(user.getUserId());
-                roleMap.put(user.getUserId(), roleName != null ? roleName : "Не назначено");
+                Long userId = user.getUserId();
+                String roleName;
+                if (userRoleService.isAdmin(userId)) {
+                    roleName = "ADMIN";
+                } else if (userRoleService.isManager(userId)) {
+                    roleName = "MANAGER";
+                } else if (userRoleService.isDeveloper(userId)) {
+                    roleName = "DEVELOPER";
+                } else if (userRoleService.isTester(userId)) {
+                    roleName = "TESTER";
+                } else {
+                    roleName = "Not assigned";
+                }
+                roleMap.put(userId, roleName);
             }
             req.setAttribute("users", users);
             req.setAttribute("roleMap", roleMap);
@@ -66,12 +80,10 @@ public class UserServlet extends HttpServlet {
                     throw new IllegalArgumentException("User ID not provided");
                 }
                 Long id = Long.parseLong(idStr);
-                String currentRole = userRoleService.getRoleNameByUserId(id);
-                if (currentRole != null && !"Не назначено".equals(currentRole)) {
-                    Long roleId = roleService.getRoleIdByName(currentRole).orElse(null);
-                    if (roleId != null) {
-                        userRoleService.delete(id, roleId);
-                    }
+                // Удаляем все роли пользователя
+                List<UserRole> userRoles = userRoleRepository.findByUserId(id);
+                for (UserRole ur : userRoles) {
+                    userRoleService.delete(ur.getUserId(), ur.getRoleId());
                 }
                 userService.deleteUser(id);
                 resp.getWriter().write("{\"success\": true}");

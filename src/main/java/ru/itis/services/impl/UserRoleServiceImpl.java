@@ -9,6 +9,7 @@ import ru.itis.repositories.interfaces.UserRoleRepository;
 import ru.itis.services.interfaces.UserRoleService;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserRoleServiceImpl implements UserRoleService {
     private final UserRoleRepository userRoleRepository;
@@ -51,8 +52,46 @@ public class UserRoleServiceImpl implements UserRoleService {
     public boolean isAdmin(Long userId) {
         List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
         for (UserRole ur : userRoles) {
-            Role role = roleRepository.findById(ur.getRoleId()).orElse(null);
-            if (role != null && "Администратор".equalsIgnoreCase(role.getRoleName())) return true;
+            Optional<Role> roleOpt = roleRepository.findById(ur.getRoleId());
+            if (roleOpt.isPresent() && "ADMIN".equalsIgnoreCase(roleOpt.get().getRoleName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isManager(Long userId) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        for (UserRole ur : userRoles) {
+            Optional<Role> roleOpt = roleRepository.findById(ur.getRoleId());
+            if (roleOpt.isPresent() && "MANAGER".equalsIgnoreCase(roleOpt.get().getRoleName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isDeveloper(Long userId) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        for (UserRole ur : userRoles) {
+            Optional<Role> roleOpt = roleRepository.findById(ur.getRoleId());
+            if (roleOpt.isPresent() && "DEVELOPER".equalsIgnoreCase(roleOpt.get().getRoleName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isTester(Long userId) {
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        for (UserRole ur : userRoles) {
+            Optional<Role> roleOpt = roleRepository.findById(ur.getRoleId());
+            if (roleOpt.isPresent() && "TESTER".equalsIgnoreCase(roleOpt.get().getRoleName())) {
+                return true;
+            }
         }
         return false;
     }
@@ -69,15 +108,4 @@ public class UserRoleServiceImpl implements UserRoleService {
         create(newRole);
     }
 
-    @Override
-    public String getRoleNameByUserId(Long userId) {
-        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
-        if (userRoles.isEmpty()) {
-            return "Не назначено";
-        }
-        Long roleId = userRoles.get(0).getRoleId();
-        return roleRepository.findById(roleId)
-                .map(Role::getRoleName)
-                .orElse("Неизвестно");
-    }
 }

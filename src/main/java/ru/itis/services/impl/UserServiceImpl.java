@@ -41,4 +41,8 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllManagers() {
         return userRepository.findByRole(2L);
     }
+    @Override
+    public Optional<User> findByEmailAndPassword(String email, String hashedPassword) {
+        return userRepository.findByEmailAndPassword(email, hashedPassword);
+    }
 }
