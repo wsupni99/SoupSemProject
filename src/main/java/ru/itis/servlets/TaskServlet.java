@@ -72,7 +72,6 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("isManager", userRoleService.isManager(userId));
         }
 
-        // Список всех задач с фильтрами
         if ("/tasks".equals(path)) {
             Map<String, String[]> params = req.getParameterMap();
             List<Task> tasks = taskService.getFilteredTasks(params);
@@ -88,7 +87,6 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Форма выбора проекта для новой задачи
         if ("/task/new".equals(path)) {
             List<Project> projects = projectService.getAll();
             req.setAttribute("projects", projects);
@@ -96,7 +94,6 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Форма создания задачи для выбранного проекта
         if ("/task/newWithProject".equals(path)) {
             String projectIdStr = req.getParameter("id");
             if (projectIdStr == null || projectIdStr.isEmpty()) {
@@ -114,7 +111,6 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Просмотр/редактирование задачи
         if ("/task".equals(path)) {
             String idStr = req.getParameter("id");
             if (idStr == null || idStr.isEmpty()) {
@@ -141,7 +137,6 @@ public class TaskServlet extends HttpServlet {
             List<User> users = userService.getAllUsers();
             List<Comment> comments = commentService.getByTaskId(taskId);
 
-            // Поиск имен связанных сущностей
             String projectName = "";
             if (task.getProjectId() != null) {
                 for (Project p : projects) {
@@ -181,7 +176,7 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("taskUserName", taskUserName);
             req.setAttribute("sprintName", sprintName);
 
-            // Проверка прав доступа
+
             if (session != null && session.getAttribute("user") != null) {
                 User currentUser = (User) session.getAttribute("user");
                 Long currentUserId = currentUser.getUserId();
@@ -196,7 +191,6 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Форма редактирования задачи
         if ("/task/edit".equals(path)) {
             String idStr = req.getParameter("id");
             if (idStr == null || idStr.isEmpty()) {
@@ -231,7 +225,7 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Удаление задачи
+
         if ("/task/delete".equals(path)) {
             String idStr = req.getParameter("id");
             if (idStr == null || idStr.isEmpty()) {
@@ -263,7 +257,8 @@ public class TaskServlet extends HttpServlet {
         Long currentUserId = currentUser.getUserId();
         boolean isAdminOrManager = userRoleService.isAdmin(currentUserId) || userRoleService.isManager(currentUserId);
 
-        // Создание новой задачи
+
+
         if ("/task/create".equals(path)) {
             if (!isAdminOrManager) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Нет прав на создание задач");
@@ -320,7 +315,8 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Обновление задачи
+
+
         if ("/task/update".equals(path)) {
             if (!isAdminOrManager) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Нет прав на редактирование задач");
@@ -390,7 +386,8 @@ public class TaskServlet extends HttpServlet {
             return;
         }
 
-        // Добавление комментария
+
+
         if ("/task/addComment".equals(path)) {
             String text = req.getParameter("text");
             String taskIdStr = req.getParameter("taskId");

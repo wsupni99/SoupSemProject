@@ -1,23 +1,40 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page language="java" contentType="text/html; charset=UTF-8" %>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Вход</title>
-
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css">
 </head>
-<body class="page-shell">
-<form method="post" action="${pageContext.request.contextPath}/login">
-    Email: <input type="text" name="email"><br>
-    Пароль: <input type="password" name="password"><br>
-    <button type="submit">Войти</button>
-</form>
-<c:if test="${not empty error}">
-    <div style="color:red">${error}</div>
-</c:if>
+<body class="auth-page">
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1 class="auth-title">Вход в систему</h1>
+        <p class="auth-subtitle">Управляйте проектами и задачами в одном месте</p>
 
+        <c:if test="${not empty error}">
+            <div class="error">${error}</div>
+        </c:if>
+
+        <form method="post" action="${pageContext.request.contextPath}/login">
+            <div class="auth-form-row">
+                <label class="auth-form-label" for="email">Email</label>
+                <input class="auth-form-input" type="email" id="email" name="email" required>
+            </div>
+
+            <div class="auth-form-row">
+                <label class="auth-form-label" for="password">Пароль</label>
+                <input class="auth-form-input" type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn-primary auth-submit">Войти</button>
+
+            <p class="auth-note">Нет аккаунта?</p>
+            <a href="${pageContext.request.contextPath}/register" class="auth-link">Создать аккаунт</a>
+        </form>
+    </div>
+</div>
 </body>
 </html>

@@ -30,7 +30,7 @@ public class ApplicationContextListener implements ServletContextListener {
             UserRoleRepository userRoleRepository = new UserRoleRepositoryJdbcImpl();
             RoleRepository roleRepository = new RoleRepositoryJdbcImpl();
 
-            // Сервисы (с учётом зависимостей: ProjectService перед SprintService)
+            // Сервисы
             UserService userService = new UserServiceImpl(userRepository);
             ProjectService projectService = new ProjectServiceImpl(projectRepository, sprintRepository, taskRepository);
             SprintService sprintService = new SprintServiceImpl(sprintRepository, projectService);  // Зависит от projectService

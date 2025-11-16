@@ -11,6 +11,4 @@ public class Role {
     private Long roleId;
     private String roleName;
     private String description;
-
-    public static final String ADMIN_ROLE_NAME = "admin";
 }
