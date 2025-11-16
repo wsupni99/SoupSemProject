@@ -30,34 +30,39 @@
     <textarea name="description" required>${task.description}</textarea><br>
 
     <label>Приоритет:</label><br>
-    <input type="text" name="priority" value="${task.priority}" required><br>
+    <select name="priority" required>
+        <option value="низкий" <c:if test="${task.priority == 'низкий'}">selected</c:if>>Низкий</option>
+        <option value="средний" <c:if test="${task.priority == 'средний'}">selected</c:if>>Средний</option>
+        <option value="высокий" <c:if test="${task.priority == 'высокий'}">selected</c:if>>Высокий</option>
+        <option value="критичный" <c:if test="${task.priority == 'критичный'}">selected</c:if>>Критичный</option>
+    </select><br>
 
     <label>Статус:</label><br>
-    <input type="text" name="status" value="${task.status}" required><br>
+    <select name="status" required>
+        <option value="новая" <c:if test="${task.status == 'новая'}">selected</c:if>>Новая</option>
+        <option value="в работе" <c:if test="${task.status == 'в работе'}">selected</c:if>>В работе</option>
+        <option value="тест" <c:if test="${task.status == 'тест'}">selected</c:if>>Тест</option>
+        <option value="готова" <c:if test="${task.status == 'готова'}">selected</c:if>>Готова</option>
+        <option value="отложена" <c:if test="${task.status == 'отложена'}">selected</c:if>>Отложена</option>
+    </select><br>
 
     <label>Дедлайн:</label><br>
-    <input type="date" name="deadline" value="<c:out value='${task.deadline}'/>"><br>
+    <input type="date" name="deadline" value="${task.deadline}"><br>
 
     <label>Родительская задача (опционально):</label><br>
-    <input type="number" name="parentTaskId" id="parentTaskId" min="1" step="1" pattern="[0-9]*"
-           value="${task.parentTaskId != null ? task.parentTaskId : ''}"><br>
+    <input type="number" name="parentTaskId" value="${task.parentTaskId != null ? task.parentTaskId : ''}"><br>
 
     <label>Пользователь:</label><br>
-    <input type="text" id="user-search" value="${taskUserName}" readonly>
-    <input type="hidden" id="userIdInput" name="userId" value="${task.userId}" required>
-    <select id="userList" size="5" onclick="selectUser()">
+    <select name="userId" required>
         <c:forEach var="user" items="${users}">
-            <option value="${user.userId}" <c:if test="${user.userId == task.userId}">selected</c:if>>
-                    ${user.name}
-            </option>
+            <option value="${user.userId}" <c:if test="${user.userId == task.userId}">selected</c:if>>${user.name}</option>
         </c:forEach>
-    </select>
+    </select><br>
 
-    <br>
     <input type="submit" value="Сохранить">
     <input type="button" value="Назад" onclick="history.back();">
-
 </form>
+
 
 <h3>Комментарии</h3>
 <c:if test="${empty comments}">
@@ -94,8 +99,8 @@
         if (this.value === '0') this.value = '';
     });
     function selectUser() {
-        var select = document.getElementById('userList');
-        var chosen = select.options[select.selectedIndex];
+        const select = document.getElementById('userList');
+        const chosen = select.options[select.selectedIndex];
         document.getElementById('user-search').value = chosen.text;
         document.getElementById('userIdInput').value = chosen.value;
     }

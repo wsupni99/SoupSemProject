@@ -1,14 +1,15 @@
 package ru.itis.servlets;
 
 import ru.itis.entities.Project;
+import ru.itis.entities.User;
 import ru.itis.exceptions.EntityNotFoundException;
 import ru.itis.exceptions.ProjectNotEmptyException;
 import ru.itis.repositories.jdbc.*;
 import ru.itis.services.impl.ProjectServiceImpl;
 import ru.itis.services.impl.UserServiceImpl;
-import ru.itis.services.interfaces.ProjectService;
-import ru.itis.services.interfaces.UserService;
+import ru.itis.services.interfaces.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -26,9 +27,34 @@ import java.util.*;
 })
 public class ProjectServlet extends HttpServlet {
 
-    private final ProjectService projectService = new ProjectServiceImpl(new ProjectRepositoryJdbcImpl(), new SprintRepositoryJdbcImpl(), new TaskRepositoryJdbcImpl());
-    private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
-    private static final List<String> STATUSES = Arrays.asList("активен", "на паузе", "завершён");
+    private ProjectService projectService;
+    private SprintService sprintService;
+    private TaskService taskService;
+    private UserRoleService userRoleService;
+    private UserService userService;
+
+    private Map<String, Object> getServices(ServletContext servletContext) {
+        return (Map<String, Object>) servletContext.getAttribute("services");
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        Map<String, Object> services = getServices(getServletContext());
+        if (services == null) {
+            throw new RuntimeException("Services not initialized in context");
+        }
+
+        projectService = (ProjectService) services.get("projectService");
+        sprintService = (SprintService) services.get("sprintService");
+        taskService = (TaskService) services.get("taskService");
+        userRoleService = (UserRoleService) services.get("userRoleService");
+        userService = (UserService) services.get("userService");
+
+        if (projectService == null || sprintService == null || taskService == null || userRoleService == null) {
+            throw new RuntimeException("Project services failed to initialize");
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -47,7 +73,6 @@ public class ProjectServlet extends HttpServlet {
             return;
         }
         if ("/project/new".equals(path)) {
-            req.setAttribute("statuses", STATUSES);
             req.setAttribute("managers", userService.getAllManagers());
             req.getRequestDispatcher("/WEB-INF/jsp/project/projectNewForm.jsp").forward(req, resp);
             return;

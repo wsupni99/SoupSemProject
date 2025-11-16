@@ -108,4 +108,9 @@ public class UserRoleServiceImpl implements UserRoleService {
         create(newRole);
     }
 
+    @Override
+    public List<UserRole> findByUserId(Long userId) {
+        return userRoleRepository.findByUserId(userId);
+    }
+
 }

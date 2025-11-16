@@ -10,6 +10,7 @@ import ru.itis.services.interfaces.UserRoleService;
 import ru.itis.services.interfaces.UserService;
 import ru.itis.util.PasswordUtil;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,13 +18,34 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 @WebServlet(name = "AuthServlet", urlPatterns = "/login")
 public class AuthServlet extends HttpServlet {
+    private UserService userService;
+    private UserRoleService userRoleService;
 
-    private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
-    private final UserRoleService userRoleService = new UserRoleServiceImpl(new UserRoleRepositoryJdbcImpl(), new RoleRepositoryJdbcImpl());
+    private Map<String, Object> getServices(ServletContext servletContext) {
+        return (Map<String, Object>) servletContext.getAttribute("services");
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        Map<String, Object> services = getServices(getServletContext());
+        if (services == null) {
+            throw new RuntimeException("Services not initialized in context");
+        }
+
+        userService = (UserService) services.get("userService");
+        userRoleService = (UserRoleService) services.get("userRoleService");
+
+        if (userService == null || userRoleService == null) {
+            throw new RuntimeException("Auth services failed to initialize");
+        }
+        System.out.println("AuthServlet services initialized");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

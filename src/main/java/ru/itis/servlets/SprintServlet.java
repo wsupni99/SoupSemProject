@@ -10,7 +10,9 @@ import ru.itis.services.impl.ProjectServiceImpl;
 import ru.itis.services.interfaces.ProjectService;
 import ru.itis.services.interfaces.SprintService;
 import ru.itis.services.impl.SprintServiceImpl;
+import ru.itis.services.interfaces.UserRoleService;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -29,18 +31,31 @@ import java.util.Map;
         "/sprint/create"
 })
 public class SprintServlet extends HttpServlet {
-    SprintService sprintService = new SprintServiceImpl(
-            new SprintRepositoryJdbcImpl(),
-            new ProjectServiceImpl(
-                    new ProjectRepositoryJdbcImpl(),
-                    new SprintRepositoryJdbcImpl(),
-                    new TaskRepositoryJdbcImpl()
-            )
-    );
-    ProjectService projectService = new ProjectServiceImpl(
-            new ProjectRepositoryJdbcImpl(),
-            new SprintRepositoryJdbcImpl(),
-            new TaskRepositoryJdbcImpl());
+    private SprintService sprintService;
+    private ProjectService projectService;
+    private UserRoleService userRoleService;
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getServices(ServletContext servletContext) {
+        return (Map<String, Object>) servletContext.getAttribute("services");
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        Map<String, Object> services = getServices(getServletContext());
+        if (services == null) {
+            throw new RuntimeException("Services not initialized in context");
+        }
+
+        sprintService = (SprintService) services.get("sprintService");
+        projectService = (ProjectService) services.get("projectService");
+        userRoleService = (UserRoleService) services.get("userRoleService");
+
+        if (sprintService == null || projectService == null || userRoleService == null) {
+            throw new RuntimeException("Sprint services failed to initialize");
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

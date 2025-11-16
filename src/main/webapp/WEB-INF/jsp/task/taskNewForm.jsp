@@ -6,6 +6,7 @@
     <title>Создание задачи</title>
 </head>
 <body>
+<h2>Создание задачи</h2>
 <form action="${pageContext.request.contextPath}/task/create" method="post" onsubmit="return checkTaskFields();">
     <input type="hidden" name="projectId" value="${projectId}" />
     <label>Спринт:</label>
@@ -19,9 +20,20 @@
     <label>Описание:</label>
     <textarea name="description" required></textarea><br>
     <label>Приоритет:</label>
-    <input type="text" name="priority" required><br>
+    <select name="priority" required>
+        <option value="низкий">Низкий</option>
+        <option value="средний">Средний</option>
+        <option value="высокий">Высокий</option>
+        <option value="критичный">Критичный</option>
+    </select><br>
     <label>Статус:</label>
-    <input type="text" name="status" required><br>
+    <select name="status" required>
+        <option value="новая">Новая</option>
+        <option value="в работе">В работе</option>
+        <option value="тест">Тест</option>
+        <option value="готова">Готова</option>
+        <option value="отложена">Отложена</option>
+    </select><br>
     <label>Дедлайн:</label>
     <input type="date" name="deadline" required><br>
     <label>Родительская задача (опционально):</label>

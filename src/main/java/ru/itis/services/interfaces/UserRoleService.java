@@ -20,4 +20,5 @@ public interface UserRoleService {
 
     void assignRole(Long userId, Long roleId);
 
+    List<UserRole> findByUserId(Long userId);
 }

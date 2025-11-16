@@ -14,7 +14,6 @@
             <li><a href="${pageContext.request.contextPath}/sprints">Спринты</a></li>
             <li><a href="${pageContext.request.contextPath}/tasks">Задачи</a></li>
             <li><a href="${pageContext.request.contextPath}/users">Пользователи</a></li>
-            <li><a href="${pageContext.request.contextPath}/workload">Нагрузка</a></li>
         </ul>
     </body>
 </html>

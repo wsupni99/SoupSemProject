@@ -5,30 +5,49 @@ import ru.itis.entities.User;
 import ru.itis.entities.UserRole;
 import ru.itis.exceptions.EntityNotFoundException;
 import ru.itis.repositories.jdbc.*;
-import ru.itis.services.impl.ProjectServiceImpl;
-import ru.itis.services.impl.RoleServiceImpl;
-import ru.itis.services.impl.UserServiceImpl;
-import ru.itis.services.impl.UserRoleServiceImpl;
 import ru.itis.services.interfaces.ProjectService;
 import ru.itis.services.interfaces.RoleService;
 import ru.itis.services.interfaces.UserService;
 import ru.itis.services.interfaces.UserRoleService;
 import ru.itis.util.PasswordUtil;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
-    private final RoleService roleService = new RoleServiceImpl(new RoleRepositoryJdbcImpl());
-    private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
-    private final UserRoleService userRoleService = new UserRoleServiceImpl(new UserRoleRepositoryJdbcImpl(), new RoleRepositoryJdbcImpl());
-    private final ProjectService projectService = new ProjectServiceImpl(new ProjectRepositoryJdbcImpl(), new SprintRepositoryJdbcImpl(), new TaskRepositoryJdbcImpl());
+    private UserService userService;
+    private UserRoleService userRoleService;
+    private RoleService roleService;
+    private ProjectService projectService;
 
+    private Map<String, Object> getServices(ServletContext servletContext) {
+        return (Map<String, Object>) servletContext.getAttribute("services");
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        Map<String, Object> services = getServices(getServletContext());
+        if (services == null) {
+            throw new RuntimeException("Services not initialized in context");
+        }
+
+        userService = (UserService) services.get("userService");
+        userRoleService = (UserRoleService) services.get("userRoleService");
+        roleService = (RoleService) services.get("roleService");
+        projectService = (ProjectService) services.get("projectService");
+
+        if (userService == null || userRoleService == null || roleService == null || projectService == null) {
+            throw new RuntimeException("Register services failed to initialize");
+        }
+    }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Project> projects = projectService.getAll();

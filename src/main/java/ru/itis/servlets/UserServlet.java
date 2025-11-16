@@ -12,6 +12,7 @@ import ru.itis.services.interfaces.RoleService;
 import ru.itis.services.interfaces.UserRoleService;
 import ru.itis.services.interfaces.UserService;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,11 +29,30 @@ import java.util.Map;
 })
 public class UserServlet extends HttpServlet {
 
-    private final UserService userService = new UserServiceImpl(new UserRepositoryJdbcImpl());
-    private final RoleService roleService = new RoleServiceImpl(new RoleRepositoryJdbcImpl());
-    private final UserRoleService userRoleService = new UserRoleServiceImpl(new UserRoleRepositoryJdbcImpl(), new RoleRepositoryJdbcImpl());
-    private final UserRoleRepositoryJdbcImpl userRoleRepository = new UserRoleRepositoryJdbcImpl();
+    private UserService userService;
+    private UserRoleService userRoleService;
+    private RoleService roleService;
 
+    private Map<String, Object> getServices(ServletContext servletContext) {
+        return (Map<String, Object>) servletContext.getAttribute("services");
+    }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        Map<String, Object> services = getServices(getServletContext());
+        if (services == null) {
+            throw new RuntimeException("Services not initialized in context");
+        }
+
+        userService = (UserService) services.get("userService");
+        userRoleService = (UserRoleService) services.get("userRoleService");
+        roleService = (RoleService) services.get("roleService");
+
+        if (userService == null || userRoleService == null || roleService == null) {
+            throw new RuntimeException("User services failed to initialize");
+        }
+    }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
@@ -80,8 +100,7 @@ public class UserServlet extends HttpServlet {
                     throw new IllegalArgumentException("User ID not provided");
                 }
                 Long id = Long.parseLong(idStr);
-                // Удаляем все роли пользователя
-                List<UserRole> userRoles = userRoleRepository.findByUserId(id);
+                List<UserRole> userRoles = userRoleService.findByUserId(id);
                 for (UserRole ur : userRoles) {
                     userRoleService.delete(ur.getUserId(), ur.getRoleId());
                 }

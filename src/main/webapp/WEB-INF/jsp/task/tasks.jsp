@@ -3,14 +3,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Tasks List</title>
+    <title>Список задач</title>
 </head>
 <body>
-<h2>Tasks List</h2>
+<h2>Список задач</h2>
 
-<!-- Ссылка на создание, только для admin/manager -->
 <c:if test="${isAdmin || isManager}">
-    <a href="${pageContext.request.contextPath}/taskNewForm">Создать задачу</a><br><br>
+    <a href="${pageContext.request.contextPath}/task/new">Создать задачу</a><br><br>
 </c:if>
 
 <a href="${pageContext.request.contextPath}/home">Вернуться домой</a>
