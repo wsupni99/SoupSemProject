@@ -3,15 +3,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Registration</title>
+    <title>Регистрация</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body>
-<h2>Registration</h2>
+<h2>Регистрация</h2>
 <c:if test="${not empty error}">
     <p style="color: red;">${error}</p>
-</c:if>
-<c:if test="${not empty debugRole}">
-    <p style="color: blue;">Debug role: '${debugRole}'</p>
 </c:if>
 <form accept-charset="UTF-8" action="${pageContext.request.contextPath}/register" method="post">
     <label>Email:</label>
@@ -45,7 +43,7 @@
 
 <script>
     document.getElementById('roleSelect').addEventListener('change', function() {
-        var projectDiv = document.getElementById('projectDiv');
+        const projectDiv = document.getElementById('projectDiv');
         if (this.value === 'MANAGER') {
             projectDiv.style.display = 'block';
         } else {

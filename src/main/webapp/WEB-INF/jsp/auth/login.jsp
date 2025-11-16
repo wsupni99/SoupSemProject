@@ -1,7 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <html>
-<head><title>Вход</title></head>
+<head>
+    <title>Вход</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+</head>
 <body>
 <form method="post" action="${pageContext.request.contextPath}/login">
     Email: <input type="text" name="email"><br>
