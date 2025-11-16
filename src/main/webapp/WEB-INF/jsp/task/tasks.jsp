@@ -3,9 +3,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Создание задачи</title>
+    <title>Tasks List</title>
 </head>
 <body>
+<h2>Tasks List</h2>
+
+<!-- Ссылка на создание, только для admin/manager -->
+<c:if test="${isAdmin || isManager}">
+    <a href="${pageContext.request.contextPath}/taskNewForm">Создать задачу</a><br><br>
+</c:if>
+
+<a href="${pageContext.request.contextPath}/home">Вернуться домой</a>
+
 <form method="get" action="${pageContext.request.contextPath}/tasks">
     <select name="user_id">
         <option value="">Все пользователи</option>
@@ -55,14 +64,16 @@
         <th>Пользователь</th>
         <th>Спринт</th>
         <th>Статус</th>
-        <th>Действия</th>
+        <c:if test="${isAdmin || isManager}">
+            <th>Действия</th>
+        </c:if>
     </tr>
     </thead>
     <tbody>
     <c:forEach var="task" items="${tasks}">
         <tr>
             <td>${task.taskId}</td>
-            <td>${task.name}</td>
+            <td><a href="${pageContext.request.contextPath}/task?id=${task.taskId}">${task.name}</a></td>
             <td>
                 <c:forEach var="project" items="${projects}">
                     <c:if test="${project.projectId == task.projectId}">${project.name}</c:if>
@@ -79,10 +90,11 @@
                 </c:forEach>
             </td>
             <td>${task.status}</td>
-            <td>
-                <a href="${pageContext.request.contextPath}/task/edit?id=${task.taskId}">Редактировать</a>
-                <a href="${pageContext.request.contextPath}/task/delete?id=${task.taskId}" onclick="return confirm('Удалить задачу?');">Удалить</a>
-            </td>
+            <c:if test="${isAdmin || isManager}">
+                <td>
+                    <a href="${pageContext.request.contextPath}/task/delete?id=${task.taskId}" onclick="return confirm('Удалить задачу?');">Удалить</a>
+                </td>
+            </c:if>
         </tr>
     </c:forEach>
     </tbody>
