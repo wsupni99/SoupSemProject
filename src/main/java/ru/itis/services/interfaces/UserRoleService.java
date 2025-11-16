@@ -11,4 +11,6 @@ public interface UserRoleService {
     void update(UserRole updated);
     void delete(Long userId, Long roleId);
     boolean isAdmin(Long userId);
+
+    void assignRole(Long userId, Long roleId);
 }

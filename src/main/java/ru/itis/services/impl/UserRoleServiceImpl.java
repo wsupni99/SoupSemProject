@@ -52,8 +52,20 @@ public class UserRoleServiceImpl implements UserRoleService {
         List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
         for (UserRole ur : userRoles) {
             Role role = roleRepository.findById(ur.getRoleId()).orElse(null);
-            if (role != null && "admin".equalsIgnoreCase(role.getRoleName())) return true;
+            if (role != null && "Администратор".equalsIgnoreCase(role.getRoleName())) return true;
         }
         return false;
+    }
+
+    @Override
+    public void assignRole(Long userId, Long roleId) {
+        List<UserRole> existingRoles = userRoleRepository.findByUserId(userId);
+        for (UserRole ur : existingRoles) {
+            delete(userId, ur.getRoleId());
+        }
+        UserRole newRole = new UserRole();
+        newRole.setUserId(userId);
+        newRole.setRoleId(roleId);
+        create(newRole);
     }
 }
