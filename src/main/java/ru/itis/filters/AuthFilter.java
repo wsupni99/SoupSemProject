@@ -12,31 +12,42 @@ public class AuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
+        // no-op
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest,
+                         ServletResponse servletResponse,
+                         FilterChain filterChain) throws IOException, ServletException {
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-        HttpSession session = httpRequest.getSession(false);
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        HttpSession session = request.getSession(false);
 
-        String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
+        Boolean isAuthenticated = false;
+        Boolean sessionExists = session != null;
+        Boolean isSignInOrUpPage = request.getRequestURI().equals(request.getContextPath() + "/login")
+                || request.getRequestURI().equals(request.getContextPath() + "/register");
+        Boolean wantsCss = request.getRequestURI().startsWith(request.getContextPath() + "/css/");
 
-        boolean loggedIn = (session != null && session.getAttribute("user") != null);
-        boolean allowedPath = path.equals("/login") || path.equals("/register");
+        if (sessionExists) {
+            // здесь в сессии лежит объект User, а не Boolean
+            isAuthenticated = session.getAttribute("user") != null;
+        }
 
-        if (loggedIn || allowedPath) {
-            chain.doFilter(request, response);
+        if (!isAuthenticated && isSignInOrUpPage || wantsCss) {
+            filterChain.doFilter(request, response);
+        } else if (isAuthenticated && isSignInOrUpPage) {
+            response.sendRedirect(request.getContextPath() + "/profile");
+        } else if (!isAuthenticated && !isSignInOrUpPage) {
+            response.sendRedirect(request.getContextPath() + "/login");
         } else {
-            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login");
+            filterChain.doFilter(request, response);
         }
     }
 
     @Override
     public void destroy() {
-
+        // no-op
     }
 }

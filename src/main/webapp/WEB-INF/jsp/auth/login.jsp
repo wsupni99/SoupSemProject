@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css">
 </head>
-<body class="auth-page">
+<body>
 <div class="auth-wrapper">
     <div class="auth-card">
         <h1 class="auth-title">Вход в систему</h1>
@@ -29,7 +29,7 @@
                 <input class="auth-form-input" type="password" id="password" name="password" required>
             </div>
 
-            <button type="submit" class="btn-primary auth-submit">Войти</button>
+            <button type="submit" class="auth-submit">Войти</button>
 
             <p class="auth-note">Нет аккаунта?</p>
             <a href="${pageContext.request.contextPath}/register" class="auth-link">Создать аккаунт</a>
