@@ -4,12 +4,10 @@ import ru.itis.entities.Project;
 import ru.itis.entities.User;
 import ru.itis.entities.UserRole;
 import ru.itis.exceptions.EntityNotFoundException;
-import ru.itis.repositories.jdbc.*;
 import ru.itis.services.interfaces.ProjectService;
 import ru.itis.services.interfaces.RoleService;
 import ru.itis.services.interfaces.UserService;
 import ru.itis.services.interfaces.UserRoleService;
-import ru.itis.util.PasswordUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -103,12 +101,18 @@ public class RegisterServlet extends HttpServlet {
                 return;
             }
 
-            User user = new User();
-            user.setEmail(email);
-            user.setName(name);
-            user.setPasswordHash(PasswordUtil.hash(password));
-            user.setContactInfo("");
-            userService.createUser(user);
+            // Регистрация с Spring Security
+            userService.register(email, name, password);
+
+            Optional<User> createdOpt = userService.getByEmail(email);
+            if (!createdOpt.isPresent()) {
+                req.setAttribute("error", "Registration error");
+                List<Project> projects = projectService.getAll();
+                req.setAttribute("projects", projects);
+                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                return;
+            }
+            User user = createdOpt.get();
 
             Optional<Long> roleIdOpt = roleService.getRoleIdByName(roleName);
             if (!   roleIdOpt.isPresent()) {

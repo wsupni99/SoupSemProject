@@ -1,14 +1,8 @@
 package ru.itis.servlets;
 
 import ru.itis.entities.User;
-import ru.itis.repositories.jdbc.RoleRepositoryJdbcImpl;
-import ru.itis.repositories.jdbc.UserRepositoryJdbcImpl;
-import ru.itis.repositories.jdbc.UserRoleRepositoryJdbcImpl;
-import ru.itis.services.impl.UserRoleServiceImpl;
-import ru.itis.services.impl.UserServiceImpl;
 import ru.itis.services.interfaces.UserRoleService;
 import ru.itis.services.interfaces.UserService;
-import ru.itis.util.PasswordUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -64,15 +58,14 @@ public class AuthServlet extends HttpServlet {
             return;
         }
 
-        Optional<User> userOpt = userService.getByEmail(email.trim());
+        Optional<User> userOpt = userService.login(email, password);
+
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            if (PasswordUtil.matches(password.trim(), user.getPasswordHash())) {
-                HttpSession session = req.getSession();
-                session.setAttribute("user", user);
-                resp.sendRedirect(req.getContextPath() + "/home");
-                return;
-            }
+            HttpSession session = req.getSession();
+            session.setAttribute("user", user);
+            resp.sendRedirect(req.getContextPath() + "/home");
+            return;
         }
 
         req.setAttribute("error", "Invalid email or password");

@@ -13,6 +13,6 @@ public interface UserService {
     void deleteUser(Long id);
     void createUser(User user);
     List<User> getAllManagers();
-
-    Optional<User> findByEmailAndPassword(String email, String hashedPassword);
+    void register(String email, String name, String rawPassword);
+    Optional<User> login(String email, String rawPassword);
 }
