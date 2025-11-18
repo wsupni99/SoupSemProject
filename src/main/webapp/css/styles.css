@@ -457,3 +457,98 @@ body.auth-page {
 .auth-link:hover {
     text-decoration: underline;
 }
+
+/* --------------------
+   Задачи и комменты к ним
+   -------------------- */
+.task-edit-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    margin-top: 24px;
+}
+
+.task-edit-main {
+    flex: 2;
+    min-width: 0;
+}
+
+.task-edit-comments {
+    flex: 1.4;
+    min-width: 320px;
+    max-width: 420px;
+}
+
+.task-comments-card {
+    background: #ffffff;
+    border-radius: 6px;
+    border: 1px solid #dfe1e6;
+    box-shadow: 0 1px 3px rgba(9, 30, 66, 0.15);
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.task-comments-card h3 {
+    font-size: 16px;
+    margin: 0 0 8px 0;
+    color: #172b4d;
+}
+
+.task-comments-list {
+    max-height: 320px;
+    overflow-y: auto;
+    margin-bottom: 12px;
+    padding-right: 4px;
+}
+
+.task-comment-item {
+    font-size: 13px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #ebecf0;
+}
+
+.task-comment-author {
+    font-weight: 600;
+    color: #172b4d;
+}
+
+.task-comment-date {
+    font-size: 11px;
+    color: #6b778c;
+}
+
+.task-comment-text {
+    margin-top: 2px;
+    color: #172b4d;
+}
+
+.task-comment-form textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid #dfe1e6;
+    font-size: 13px;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+}
+
+.task-comment-form .btn-comment-submit {
+    display: inline-block;
+    padding: 6px 12px;
+    font-size: 13px;
+    border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+    .task-edit-layout {
+        flex-direction: column;
+    }
+
+    .task-edit-comments {
+        max-width: 100%;
+        width: 100%;
+    }
+}

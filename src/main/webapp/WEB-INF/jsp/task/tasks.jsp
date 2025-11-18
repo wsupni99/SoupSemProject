@@ -111,7 +111,7 @@
             <tbody>
             <c:forEach var="task" items="${tasks}">
                 <tr>
-                    <c:if test="${isAdmin}">
+                    <c:if test="${isAdmin} || ${isManager}}">
                         <td>${task.taskId}</td>
                     </c:if>
                     <td><a href="${pageContext.request.contextPath}/task?id=${task.taskId}">${task.name}</a></td>
@@ -145,13 +145,6 @@
         </table>
     </div>
 </div>
-
-<footer>
-    <div class="container">
-        <p>&copy; 2025 Project Manager. Все права защищены.</p>
-    </div>
-</footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

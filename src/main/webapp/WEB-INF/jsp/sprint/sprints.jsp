@@ -12,24 +12,34 @@
           href="${pageContext.request.contextPath}/css/styles.css?v=1">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm navbar-custom">
     <div class="container-fluid">
-        <a class="navbar-brand" href="${pageContext.request.contextPath}/home">SOUP</a>
-        <div class="navbar-nav ms-auto">
-            <a class="nav-link" href="${pageContext.request.contextPath}/home">Главная</a>
-            <a class="nav-link" href="${pageContext.request.contextPath}/tasks">Задачи</a>
-            <a class="nav-link" href="${pageContext.request.contextPath}/projects">Проекты</a>
-            <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
-            <c:if test="${isAdmin || isManager}">
-                <a class="nav-link" href="${pageContext.request.contextPath}/users">Пользователи</a>
-            </c:if>
-            <c:if test="${not empty sessionScope.user}">
-                <span class="navbar-text">ID: ${sessionScope.user.userId}</span>
-                <a class="nav-link" href="${pageContext.request.contextPath}/logout">Выход</a>
-            </c:if>
-            <c:if test="${empty sessionScope.user}">
-                <a class="nav-link" href="${pageContext.request.contextPath}/login">Вход</a>
-            </c:if>
+        <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">SOUP</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Переключить навигацию">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/home">Главная</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/tasks">Задачи</a></li>
+                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/projects">Проекты</a></li>
+                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a></li>
+                <c:if test="${isAdmin || isManager}">
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/users">Пользователи</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/workload">Нагрузка</a></li>
+                </c:if>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <c:if test="${not empty sessionScope.user}">
+                    <li class="nav-item"><span class="navbar-text me-3">Привет, ID: ${sessionScope.user.userId}</span></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/logout">Выход</a></li>
+                </c:if>
+                <c:if test="${empty sessionScope.user}">
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/login">Вход</a></li>
+                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/register">Регистрация</a></li>
+                </c:if>
+            </ul>
         </div>
     </div>
 </nav>
