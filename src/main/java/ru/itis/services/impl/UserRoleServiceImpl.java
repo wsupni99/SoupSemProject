@@ -96,6 +96,33 @@ public class UserRoleServiceImpl implements UserRoleService {
         return false;
     }
 
+    public boolean userHasRole(Long userId, String roleName) {
+        if (userId == null || roleName == null) {
+            return false;
+        }
+
+        List<UserRole> userRoles = userRoleRepository.findByUserId(userId);
+        if (userRoles.isEmpty()) {
+            return false;
+        }
+
+        for (UserRole ur : userRoles) {
+            Long roleId = ur.getRoleId();
+            if (roleId == null) {
+                continue;
+            }
+            Optional<Role> roleOpt = roleRepository.findById(roleId);
+            if (roleOpt.isPresent()) {
+                Role role = roleOpt.get();
+                if (roleName.equalsIgnoreCase(role.getRoleName())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     @Override
     public void assignRole(Long userId, Long roleId) {
         List<UserRole> existingRoles = userRoleRepository.findByUserId(userId);

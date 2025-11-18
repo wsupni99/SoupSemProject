@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-//@WebFilter("/*")
+@WebFilter("/*")
 public class AuthFilter implements Filter {
 
     @Override
@@ -15,32 +15,37 @@ public class AuthFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest,
-                         ServletResponse servletResponse,
-                         FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
 
-        HttpServletRequest request = (HttpServletRequest) servletRequest;
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
-        HttpSession session = request.getSession(false);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        Boolean isAuthenticated = false;
-        Boolean sessionExists = session != null;
-        Boolean isSignInOrUpPage = request.getRequestURI().equals(request.getContextPath() + "/login")
-                || request.getRequestURI().equals(request.getContextPath() + "/register");
-        Boolean wantsCss = request.getRequestURI().startsWith(request.getContextPath() + "/css/");
+        String contextPath = httpRequest.getContextPath();
+        String uri = httpRequest.getRequestURI();
+        String path = uri.substring(contextPath.length());
 
-        if (sessionExists) {
-            isAuthenticated = session.getAttribute("user") != null;
+        // Статика (раньше не работали стили)
+        if (path.startsWith("/css/")
+                || path.startsWith("/js/")){
+            chain.doFilter(request, response);
+            return;
         }
 
-        if (!isAuthenticated && isSignInOrUpPage || wantsCss) {
-            filterChain.doFilter(request, response);
-        } else if (isAuthenticated && isSignInOrUpPage) {
-            response.sendRedirect(request.getContextPath() + "/profile");
-        } else if (!isAuthenticated && !isSignInOrUpPage) {
-            response.sendRedirect(request.getContextPath() + "/login");
+        HttpSession session = httpRequest.getSession(false);
+        boolean loggedIn = session != null && session.getAttribute("user") != null;
+
+        // Пути без авторизации
+        boolean publicPath =
+                path.equals("/")
+                        || path.equals("/home")
+                        || path.equals("/login")
+                        || path.equals("/register");
+
+        if (loggedIn || publicPath) {
+            chain.doFilter(request, response);
         } else {
-            filterChain.doFilter(request, response);
+            httpResponse.sendRedirect(contextPath + "/login");
         }
     }
 

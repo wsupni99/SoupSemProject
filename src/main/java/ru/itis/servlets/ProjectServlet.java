@@ -1,12 +1,8 @@
 package ru.itis.servlets;
 
 import ru.itis.entities.Project;
-import ru.itis.entities.User;
 import ru.itis.exceptions.EntityNotFoundException;
-import ru.itis.exceptions.ProjectNotEmptyException;
-import ru.itis.repositories.jdbc.*;
-import ru.itis.services.impl.ProjectServiceImpl;
-import ru.itis.services.impl.UserServiceImpl;
+import ru.itis.exceptions.EntityNotEmptyException;
 import ru.itis.services.interfaces.*;
 
 import javax.servlet.ServletContext;
@@ -189,7 +185,7 @@ public class ProjectServlet extends HttpServlet {
                 long id = Long.parseLong(idParam);
                 projectService.delete(id);
                 resp.sendRedirect(req.getContextPath() + "/projects");
-            } catch (ProjectNotEmptyException e) {
+            } catch (EntityNotEmptyException e) {
                 resp.setStatus(HttpServletResponse.SC_CONFLICT);
                 resp.getWriter().write("Cannot delete project if sprints or tasks are attached to it");
             } catch (EntityNotFoundException e) {

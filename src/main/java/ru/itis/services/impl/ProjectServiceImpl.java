@@ -2,7 +2,7 @@ package ru.itis.services.impl;
 
 import ru.itis.entities.Project;
 import ru.itis.exceptions.EntityNotFoundException;
-import ru.itis.exceptions.ProjectNotEmptyException;
+import ru.itis.exceptions.EntityNotEmptyException;
 import ru.itis.repositories.interfaces.ProjectRepository;
 import ru.itis.repositories.interfaces.SprintRepository;
 import ru.itis.repositories.interfaces.TaskRepository;
@@ -54,7 +54,7 @@ public class ProjectServiceImpl implements ProjectService {
     public void delete(Long projectId) {
         if (sprintRepository.countByProjectId(projectId) > 0 ||
                 taskRepository.countByProjectId(projectId) > 0) {
-            throw new ProjectNotEmptyException("Нельзя удалить проект: к нему привязаны спринты или задачи");
+            throw new EntityNotEmptyException("Нельзя удалить проект: к нему привязаны спринты или задачи");
         }
         projectRepository.deleteById(projectId);
     }

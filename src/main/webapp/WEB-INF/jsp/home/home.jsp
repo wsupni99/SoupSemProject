@@ -12,7 +12,6 @@
           href="${pageContext.request.contextPath}/css/styles.css?v=1">
 </head>
 <body>
-<!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">SOUP</a>
@@ -57,7 +56,6 @@
     </div>
 </nav>
 
-<!-- Основной контент -->
 <div class="container mt-5 pt-3">
     <div class="row justify-content-center">
         <div class="col-md-8">
@@ -92,7 +90,6 @@
                         </div>
                     </div>
 
-                    <!-- Навигация -->
                     <div class="nav-section">
                         <h5 class="text-center mb-3">Навигация</h5>
                         <div class="row">

@@ -297,12 +297,10 @@ footer {
     }
 }
 
-/* Специфичные стили для отдельных страниц */
 body:not(.form-page) {
     background-color: #f8f9fa;
 }
 
-/* Формы в карточках (login, register, etc.) */
 body.form-page {
     background: #f8f9fa;
     min-height: 100vh;
@@ -321,7 +319,6 @@ body.form-page .container {
     margin: 0 auto;
 }
 
-/* Ошибки */
 .error {
     color: #dc3545;
     background-color: #f8d7da;
@@ -331,19 +328,16 @@ body.form-page .container {
     margin-bottom: 16px;
 }
 
-/* Активные элементы */
 .active {
     background-color: #e7f3ff !important;
     color: #007bff !important;
 }
 
-/* Выделение таблиц */
 .table-container table {
     box-shadow: none;
     border-radius: 0;
 }
 
-/* Hover эффекты */
 tr:hover {
     background-color: #f8f9fa !important;
 }
@@ -353,7 +347,6 @@ tr:hover {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Тени и скругления */
 .container {
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     border-radius: 8px;
@@ -363,7 +356,6 @@ tr:hover {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* Анимации */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -435,7 +427,6 @@ body.auth-page {
     box-sizing: border-box;
 }
 
-/* кнопка входа / регистрации */
 .auth-submit {
     width: 100%;
     margin-top: 8px;
@@ -451,7 +442,6 @@ body.auth-page {
     background: #0056b3;
 }
 
-/* подписи под формой */
 .auth-note {
     margin-top: 12px;
     font-size: 12px;
