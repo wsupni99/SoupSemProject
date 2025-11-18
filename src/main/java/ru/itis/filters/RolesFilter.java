@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(
-        urlPatterns = {"/*"},
-        dispatcherTypes = {DispatcherType.REQUEST}
-)
+//@WebFilter(
+//        urlPatterns = {"/*"},
+//        dispatcherTypes = {DispatcherType.REQUEST}
+//)
 public class RolesFilter implements Filter {
 
     private UserRoleServiceImpl userRoleService;
@@ -28,7 +28,10 @@ public class RolesFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
+
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
 
@@ -38,9 +41,21 @@ public class RolesFilter implements Filter {
 
         String path = req.getServletPath();
 
-        if (path.equals("/login") || path.equals("/register") ||
-                path.equals("/auth/login.jsp") || path.equals("/WEB-INF/jsp/auth/login.jsp") ||
-                path.equals("/auth/register.jsp") || path.equals("/WEB-INF/jsp/auth/register.jsp")) {
+        // статика
+        if (path.startsWith("/css/")
+                || path.startsWith("/js/")
+                || path.startsWith("/images/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // гостевые страницы
+        if (path.equals("/login")
+                || path.equals("/register")
+                || path.equals("/auth/login.jsp")
+                || path.equals("/WEB-INF/jsp/auth/login.jsp")
+                || path.equals("/auth/register.jsp")
+                || path.equals("/WEB-INF/jsp/auth/register.jsp")) {
             chain.doFilter(request, response);
             return;
         }
@@ -60,7 +75,6 @@ public class RolesFilter implements Filter {
         Long userId = user.getUserId();
 
         if (userRoleService.isAdmin(userId)) {
-            System.out.println("Filter Debug: Admin access granted for path: " + path);
             chain.doFilter(request, response);
             return;
         }
@@ -73,17 +87,24 @@ public class RolesFilter implements Filter {
         if (path.equals("/users") || path.equals("/user/users")) {
             resp.sendError(403, "Access denied for your role");
             return;
-        } else if (path.equals("/projects") || path.equals("/projectEditForm") || path.equals("/projectNewForm")) {
+        } else if (path.equals("/projects")
+                || path.equals("/projectEditForm")
+                || path.equals("/projectNewForm")) {
             if (!isManager) {
                 resp.sendError(403, "Access denied for your role");
                 return;
             }
-        } else if (path.equals("/sprints") || path.equals("/sprintNewForm") || path.equals("/sprintEditForm")) {
+        } else if (path.equals("/sprints")
+                || path.equals("/sprintNewForm")
+                || path.equals("/sprintEditForm")) {
             if (!isManager) {
                 resp.sendError(403, "Access denied for your role");
                 return;
             }
-        } else if (path.equals("/newSubtaskForm") || path.equals("/taskChooseProject") || path.equals("/taskEditForm") || path.equals("/taskNewForm")) {
+        } else if (path.equals("/newSubtaskForm")
+                || path.equals("/taskChooseProject")
+                || path.equals("/taskEditForm")
+                || path.equals("/taskNewForm")) {
             if (!isManager) {
                 resp.sendError(403, "Access denied for your role");
                 return;

@@ -4,31 +4,61 @@
 <head>
     <meta charset="UTF-8">
     <title>Редактирование спринта</title>
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/styles.css?v=1">
 </head>
-<body>
-<h2>Редактирование спринта</h2>
-<div id="error-message" style="color: red; display: none;"></div>
-<form action="${pageContext.request.contextPath}/sprint/update" method="post">
-    <input type="hidden" name="sprintId" value="${sprint.sprintId}">
-    <label>Проект:</label><br>
-    <select name="projectId">
-        <c:forEach var="project" items="${projects}">
-            <option value="${project.projectId}" ${project.projectId == sprint.projectId ? 'selected' : ''}>${project.name}</option>
-        </c:forEach>
-    </select>
-    <br>
-    <label>Название:</label><br>
-    <input type="text" name="name" value="${sprint.name}" required><br>
-    <label>Дата начала:</label><br>
-    <input type="date" name="startDate" value="${sprint.startDate}" required><br>
-    <label>Дата окончания:</label><br>
-    <input type="date" name="endDate" value="${sprint.endDate}" required><br>
-    <input type="submit" value="Сохранить">
-</form>
-<form id="delete-form" action="${pageContext.request.contextPath}/sprint/delete" method="post" style="margin-top:15px;">
-    <input type="hidden" name="id" value="${sprint.sprintId}">
-    <button type="button" onclick="deleteSprint()">Удалить спринт</button>
-</form>
+<body class="form-page">
+<div class="form-card">
+    <div class="form-header">
+        <h2 class="form-header-title">Редактирование спринта</h2>
+    </div>
+
+    <div id="error-message" class="form-error" style="display: none;"></div>
+
+    <form action="${pageContext.request.contextPath}/sprint/update" method="post">
+        <input type="hidden" name="sprintId" value="${sprint.sprintId}">
+
+        <div class="form-grid-1">
+            <div class="form-group">
+                <label class="form-label">Проект:</label>
+                <select class="form-select" name="projectId">
+                    <c:forEach var="project" items="${projects}">
+                        <option value="${project.projectId}"
+                            ${project.projectId == sprint.projectId ? 'selected' : ''}>
+                                ${project.name}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Название:</label>
+                <input class="form-input" type="text" name="name" value="${sprint.name}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Дата начала:</label>
+                <input class="form-input" type="date" name="startDate" value="${sprint.startDate}" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Дата окончания:</label>
+                <input class="form-input" type="date" name="endDate" value="${sprint.endDate}" required>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <input type="submit" value="Сохранить" class="btn btn-primary">
+
+            <form id="delete-form" action="${pageContext.request.contextPath}/sprint/delete"
+                  method="post" style="margin-top:15px;">
+                <input type="hidden" name="id" value="${sprint.sprintId}">
+                <button type="button" onclick="deleteSprint()" class="btn btn-danger">Удалить спринт</button>
+            </form>
+        </div>
+    </form>
+</div>
+
 <script>
     function deleteSprint() {
         if (!confirm("Удалить спринт?")) return;

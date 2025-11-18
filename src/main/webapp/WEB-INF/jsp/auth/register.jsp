@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Регистрация</title>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/auth.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/styles.css?v=1">
 </head>
 <body class="auth-page">
 <div class="auth-wrapper">

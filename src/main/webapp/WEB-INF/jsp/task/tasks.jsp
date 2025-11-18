@@ -8,11 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Список задач</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/styles.css?v=1">
 </head>
 <body>
-<!-- Navbar как выше -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm navbar-custom">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">SOUP</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
@@ -44,14 +44,15 @@
     </div>
 </nav>
 
-<!-- Контент -->
-<div class="container mt-5 pt-3">
+<div class="container">
     <div class="table-container">
         <h2>Список задач</h2>
+
         <c:if test="${isAdmin || isManager}">
-            <a href="${pageContext.request.contextPath}/task/new">Создать задачу</a><br><br>
+            <a href="${pageContext.request.contextPath}/task/new" class="btn btn-primary">Создать задачу</a><br><br>
         </c:if>
-        <form method="get" action="${pageContext.request.contextPath}/tasks">
+
+        <form method="get" action="${pageContext.request.contextPath}/tasks" class="filters">
             <select name="user_id">
                 <option value="">Все пользователи</option>
                 <c:forEach var="user" items="${users}">
@@ -91,7 +92,7 @@
             <input type="submit" value="Применить фильтры" />
         </form>
 
-        <table border="1">
+        <table>
             <thead>
             <tr>
                 <c:if test="${isAdmin}">
@@ -110,7 +111,9 @@
             <tbody>
             <c:forEach var="task" items="${tasks}">
                 <tr>
-                    <td>${task.taskId}</td>
+                    <c:if test="${isAdmin}">
+                        <td>${task.taskId}</td>
+                    </c:if>
                     <td><a href="${pageContext.request.contextPath}/task?id=${task.taskId}">${task.name}</a></td>
                     <td>
                         <c:forEach var="project" items="${projects}">
@@ -130,7 +133,10 @@
                     <td>${task.status}</td>
                     <c:if test="${isAdmin || isManager}">
                         <td>
-                            <a href="${pageContext.request.contextPath}/task/delete?id=${task.taskId}" onclick="return confirm('Удалить задачу?');">Удалить</a>
+                            <a href="${pageContext.request.contextPath}/task/delete?id=${task.taskId}"
+                               onclick="return confirm('Удалить задачу?');">
+                                Удалить
+                            </a>
                         </td>
                     </c:if>
                 </tr>
@@ -140,7 +146,6 @@
     </div>
 </div>
 
-<!-- Footer -->
 <footer>
     <div class="container">
         <p>&copy; 2025 Project Manager. Все права защищены.</p>

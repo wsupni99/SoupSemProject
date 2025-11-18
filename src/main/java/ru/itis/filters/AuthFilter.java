@@ -7,12 +7,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter("/*")
+//@WebFilter("/*")
 public class AuthFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // no-op
     }
 
     @Override
@@ -31,7 +30,6 @@ public class AuthFilter implements Filter {
         Boolean wantsCss = request.getRequestURI().startsWith(request.getContextPath() + "/css/");
 
         if (sessionExists) {
-            // здесь в сессии лежит объект User, а не Boolean
             isAuthenticated = session.getAttribute("user") != null;
         }
 
@@ -48,6 +46,5 @@ public class AuthFilter implements Filter {
 
     @Override
     public void destroy() {
-        // no-op
     }
 }
