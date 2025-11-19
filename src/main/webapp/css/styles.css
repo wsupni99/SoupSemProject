@@ -304,9 +304,9 @@ body.form-page {
     background: #f8f9fa;
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 20px;
+    padding: 40px 20px;
 }
 
 body.form-page .container {
@@ -316,6 +316,27 @@ body.form-page .container {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     padding: 24px;
     margin: 0 auto;
+}
+
+.form-card {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 24px 28px;
+    max-width: 980px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-header {
+    margin-bottom: 16px;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 8px;
+}
+
+.form-header-title {
+    margin: 0;
+    font-size: 22px;
 }
 
 .error {
@@ -468,14 +489,20 @@ body.auth-page {
 }
 
 .task-edit-main {
-    flex: 2;
-    min-width: 0;
+    flex: 1.6;
 }
 
 .task-edit-comments {
     flex: 1.4;
     min-width: 320px;
     max-width: 420px;
+}
+
+.task-meta-panel {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
 }
 
 .task-comments-card {
@@ -563,5 +590,28 @@ body.auth-page {
     border: 1px solid #ced4da;
     border-radius: 4px;
     background-color: #fff;
+}
+
+.field-static {
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 4px;
+    background-color: #f4f5f7;
+    font-size: 14px;
+    color: #172b4d;
+    box-sizing: border-box;
+}
+
+.field-static.multiline {
+    align-items: flex-start;
+    white-space: pre-wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.form-actions {
+    margin-top: 16px;
 }
 

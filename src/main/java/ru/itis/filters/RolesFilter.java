@@ -39,10 +39,7 @@ public class RolesFilter implements Filter {
         String uri = req.getRequestURI();
         String path = uri.substring(contextPath.length());
 
-        if (path.startsWith("/css/")
-                || path.startsWith("/js/")
-                || path.startsWith("/images/")
-                || path.equals("/favicon.ico")) {
+        if (path.startsWith("/css/")) {
             chain.doFilter(request, response);
             return;
         }
@@ -78,7 +75,6 @@ public class RolesFilter implements Filter {
         }
 
         boolean isManagerOnly = isManager && !isAdmin;
-        boolean isDevOrTester = (isDeveloper || isTester) && !isManager && !isAdmin;
 
         // users только админ (админ уже пропущен выше)
         if (path.startsWith("/users")) {
@@ -86,43 +82,40 @@ public class RolesFilter implements Filter {
             return;
         }
 
-        // home: доступен всем залогиненным, но содержание различается на уровне JSP/сервлетов
-
-        // projects + формы проекта: только менеджер
+        // projects: менеджер или админ
         if (path.startsWith("/projects") || path.startsWith("/project")) {
-            if (!isManagerOnly) {
+            if (!(isManager || isAdmin)) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
         }
 
-        // sprints + формы спринтов: только менеджер
+        // sprints: менеджер или админ
         if (path.startsWith("/sprints") || path.startsWith("/sprint")) {
-            if (!isManagerOnly) {
+            if (!(isManager || isAdmin)) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
         }
+
 
         if (path.startsWith("/tasks") || path.startsWith("/task")) {
             // формы задач только менеджеру
             if (path.startsWith("/task/new")
                     || path.startsWith("/task/edit")
                     || path.startsWith("/task/chooseProject")
-                    || path.startsWith("/task/newSubtask")) {
+                    || path.startsWith("/task/newWithProject")) {
 
                 if (!isManagerOnly) {
                     resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                     return;
                 }
+            }
 
-                // newSubtaskForm: должна быть родительская задача
-                if (path.startsWith("/task/newSubtask")) {
-                    String parentId = req.getParameter("parentId");
-                    if (parentId == null || parentId.isEmpty()) {
-                        resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                        return;
-                    }
+            if (path.equals("/task") && req.getParameter("id") != null) {
+                if (!(isDeveloper || isTester)) {
+                    resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return;
                 }
             }
 
@@ -130,7 +123,7 @@ public class RolesFilter implements Filter {
             return;
         }
 
-        // home: доступ всем залогиненным (роль уже назначена), логика различий в контроллерах
+        // home: доступ всем залогиненным
         if (path.equals("/home") || path.equals("/")) {
             chain.doFilter(request, response);
             return;

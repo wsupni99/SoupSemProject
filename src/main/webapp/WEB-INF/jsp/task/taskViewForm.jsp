@@ -5,81 +5,170 @@
 <head>
     <meta charset="UTF-8">
     <title>Просмотр задачи</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=1">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/css/styles.css?v=1">
 </head>
-<body class="page">
-<div class="card task-view-layout">
-    <div class="task-view-main">
-        <div class="card-header">
-            <h2 class="card-title">Просмотр задачи</h2>
+<body class="form-page">
+<div class="form-card task-edit-layout">
+    <div class="task-edit-main">
+        <div class="form-header">
+            <h2 class="form-header-title">Просмотр задачи</h2>
         </div>
 
         <c:if test="${not empty task}">
-            <p class="field-row"><span class="field-label">ID:</span> ${task.taskId}</p>
-            <p class="field-row"><span class="field-label">Название:</span> ${task.name}</p>
-            <p class="field-row"><span class="field-label">Описание:</span> ${task.description}</p>
-            <p class="field-row"><span class="field-label">Статус:</span> ${task.status}</p>
-            <p class="field-row"><span class="field-label">Приоритет:</span> ${task.priority}</p>
-            <p class="field-row">
-                <span class="field-label">Проект:</span>
-                    ${projectName != null && !projectName.isEmpty() ? projectName : 'Не указан'}
-            </p>
-            <p class="field-row">
-                <span class="field-label">Исполнитель:</span>
-                    ${taskUserName != null && !taskUserName.isEmpty() ? taskUserName : 'Не назначен'}
-            </p>
-            <p class="field-row">
-                <span class="field-label">Спринт:</span>
-                    ${sprintName != null && !sprintName.isEmpty() ? sprintName : 'Не указан'}
-            </p>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">Спринт:</label>
+                    <div class="field-static">
+                        <c:choose>
+                            <c:when test="${not empty sprintName}">
+                                ${sprintName}
+                            </c:when>
+                            <c:otherwise>
+                                Не указан
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Пользователь:</label>
+                    <div class="field-static">
+                        <c:choose>
+                            <c:when test="${not empty taskUserName}">
+                                ${taskUserName}
+                            </c:when>
+                            <c:otherwise>
+                                Не назначен
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Название задачи:</label>
+                    <div class="field-static">${task.name}</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Приоритет:</label>
+                    <div class="field-static">
+                            ${task.priority}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Статус:</label>
+                    <div class="field-static">
+                            ${task.status}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Проект:</label>
+                    <div class="field-static">
+                        <c:choose>
+                            <c:when test="${not empty projectName}">
+                                ${projectName}
+                            </c:when>
+                            <c:otherwise>
+                                Не указан
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+            </div>
+
+            <div class="task-meta-panel">
+
+                <div class="task-meta-item">
+                    <span class="task-meta-label">Дедлайн</span>
+                    <div class="task-meta-value">
+                        <c:choose>
+                            <c:when test="${not empty task.deadline}">
+                                ${task.deadline}
+                            </c:when>
+                            <c:otherwise>
+                                Не указан
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+
+                <div class="task-meta-item">
+                    <span class="task-meta-label">Родительская задача</span>
+                    <div class="task-meta-value">
+                        <c:choose>
+                            <c:when test="${task.parentTaskId != null && task.parentTaskId != 0}">
+                                ${task.parentTaskId}
+                            </c:when>
+                            <c:otherwise>
+                                Нет
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-grid-1">
+                <div class="form-group">
+                    <label class="form-label">Описание:</label>
+                    <div class="field-static multiline">
+                            ${task.description}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <input type="button" value="Назад" class="btn btn-secondary" onclick="history.back();">
+            </div>
         </c:if>
 
         <c:if test="${empty task}">
             <p class="field-row">Задача не найдена.</p>
         </c:if>
-
-        <div class="link-wrapper">
-            <a href="${pageContext.request.contextPath}/tasks" class="btn-link">Вернуться к списку задач</a>
-        </div>
     </div>
 
-    <c:if test="${not empty task}">
-        <div class="task-view-comments">
-            <div class="task-comments-card">
-                <h3 class="comments-title">Комментарии</h3>
+    <div class="task-edit-comments">
+        <div class="task-comments-card">
+            <h3 class="comments-header">Комментарии</h3>
 
-                <div class="task-comments-list">
-                    <c:if test="${empty comments}">
-                        <p style="font-size: 13px; color: #6b778c; margin: 0;">Нет комментариев</p>
-                    </c:if>
+            <c:if test="${empty comments}">
+                <p class="comment-text">Нет комментариев</p>
+            </c:if>
 
+            <div class="task-comments-list">
+                <ul class="comments-list">
                     <c:forEach var="comment" items="${comments}">
-                        <c:set var="commentAuthor" value="Неизвестный"/>
-                        <c:forEach var="user" items="${users}">
-                            <c:if test="${comment.userId == user.userId}">
-                                <c:set var="commentAuthor" value="${user.name}"/>
-                            </c:if>
-                        </c:forEach>
-
-                        <div class="task-comment-item">
-                            <div class="task-comment-author">${commentAuthor}</div>
-                            <div class="task-comment-date">${comment.createdAt}</div>
-                            <div class="task-comment-text">${comment.text}</div>
-                        </div>
+                        <li class="task-comment-item">
+                            <p class="comment-meta">
+                                <b>
+                                    <c:forEach var="user" items="${users}">
+                                        <c:if test="${user.userId == comment.userId}">
+                                            ${user.name}
+                                        </c:if>
+                                    </c:forEach>
+                                </b>
+                                <span class="task-comment-date">(${comment.createdAt})</span>
+                            </p>
+                            <p class="comment-text task-comment-text">${comment.text}</p>
+                        </li>
                     </c:forEach>
-                </div>
-
-                <h3 class="comment-form-title">Добавить комментарий</h3>
-                <form action="${pageContext.request.contextPath}/task/addComment" method="post" class="task-comment-form">
-                    <input type="hidden" name="taskId" value="${task.taskId}">
-                    <textarea class="textarea" name="text" rows="4"
-                              placeholder="Введите комментарий..." required></textarea>
-                    <br>
-                    <input type="submit" value="Добавить комментарий" class="btn btn-primary btn-comment-submit">
-                </form>
+                </ul>
             </div>
+
+            <h3 class="comments-header" style="margin-top: 12px;">Добавить комментарий</h3>
+            <form method="post" action="${pageContext.request.contextPath}/task/addComment" class="task-comment-form">
+                <input type="hidden" name="taskId" value="${task.taskId}">
+                <div class="form-group">
+                    <textarea class="form-textarea" name="text" required placeholder="Текст комментария"></textarea>
+                </div>
+                <div class="form-actions" style="justify-content: flex-end;">
+                    <input type="submit" value="Добавить комментарий" class="btn btn-primary btn-comment-submit">
+                </div>
+            </form>
         </div>
-    </c:if>
+    </div>
 </div>
 </body>
 </html>

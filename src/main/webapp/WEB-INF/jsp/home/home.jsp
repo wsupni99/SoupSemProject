@@ -33,6 +33,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
                 </li>
+                <c:if test="${isAdmin}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/users">Пользователи</a>
+                    </li>
+                </c:if>
             </ul>
             <ul class="navbar-nav ms-auto">
                 <c:if test="${not empty sessionScope.user}">
@@ -102,7 +107,9 @@
                             <div class="col-md-6">
                                 <ul class="list-unstyled text-start">
                                     <li class="mb-2"><a href="${pageContext.request.contextPath}/sprints">⏱️ Спринты</a></li>
-                                    <li class="mb-2"><a href="${pageContext.request.contextPath}/users">👥 Пользователи (для админа)</a></li>
+                                    <c:if test="${isAdmin}">
+                                        <li class="mb-2"><a href="${pageContext.request.contextPath}/users">👥 Пользователи</a></li>
+                                    </c:if>
                                 </ul>
                             </div>
                         </div>

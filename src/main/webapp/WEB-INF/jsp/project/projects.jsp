@@ -68,12 +68,11 @@
     <a href="${pageContext.request.contextPath}/project/new">Создать проект</a></p>
     <table>
         <tr>
-            <th>ID</th><th>Имя</th><th>Описание</th><th>Дата начала</th>
+            <th>Имя</th><th>Описание</th><th>Дата начала</th>
             <th>Дата окончания</th><th>Статус</th><th>Менеджер</th>
         </tr>
         <c:forEach var="project" items="${projects}">
             <tr>
-                <td>${project.projectId}</td>
                 <td>
                     <a href="project/edit?id=${project.projectId}">${project.name}</a>
                 </td>

@@ -101,12 +101,6 @@
     </div>
 </div>
 
-<footer>
-    <div class="container">
-        <p>&copy; 2025 Project Manager. Все права защищены.</p>
-    </div>
-</footer>
-
 <script>
     function deleteUser(id) {
         if (!confirm("Вы уверены, что хотите удалить этого пользователя?")) {
