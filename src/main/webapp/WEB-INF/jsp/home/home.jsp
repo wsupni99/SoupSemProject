@@ -12,7 +12,7 @@
           href="${pageContext.request.contextPath}/css/styles.css?v=1">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm">
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm navbar-custom">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/home">SOUP</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
@@ -42,7 +42,7 @@
             <ul class="navbar-nav ms-auto">
                 <c:if test="${not empty sessionScope.user}">
                     <li class="nav-item">
-                        <span class="navbar-text me-3">Твой ID: ${sessionScope.user.userId}</span>
+                        <span class="navbar-text me-3">Привет, ID: ${sessionScope.user.userId}</span>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="${pageContext.request.contextPath}/logout">Выход</a>

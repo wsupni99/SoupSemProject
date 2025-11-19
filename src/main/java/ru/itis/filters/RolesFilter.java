@@ -76,7 +76,7 @@ public class RolesFilter implements Filter {
 
         boolean isManagerOnly = isManager && !isAdmin;
 
-        // users только админ (админ уже пропущен выше)
+        // users только админ
         if (path.startsWith("/users")) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;

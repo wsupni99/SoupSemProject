@@ -117,9 +117,6 @@
         <table>
             <thead>
             <tr>
-                <c:if test="${isAdmin}">
-                    <th>ID</th>
-                </c:if>
                 <th>Имя</th>
                 <th>Проект</th>
                 <th>Пользователь</th>
@@ -133,9 +130,6 @@
             <tbody>
             <c:forEach var="task" items="${tasks}">
                 <tr>
-                    <c:if test="${isAdmin} || ${isManager}}">
-                        <td>${task.taskId}</td>
-                    </c:if>
                     <td><a href="${pageContext.request.contextPath}/task?id=${task.taskId}">${task.name}</a></td>
                     <td>
                         <c:forEach var="project" items="${projects}">

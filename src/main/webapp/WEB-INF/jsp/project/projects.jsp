@@ -65,7 +65,9 @@
 
 <div class="container">
     <h2>Список проектов</h2>
-    <a href="${pageContext.request.contextPath}/project/new">Создать проект</a></p>
+    <c:if test="${isAdmin || isManager}">
+        <a href="${pageContext.request.contextPath}/project/new" class="btn btn-primary">Создать проект</a><br><br>
+    </c:if>
     <table>
         <tr>
             <th>Имя</th><th>Описание</th><th>Дата начала</th>

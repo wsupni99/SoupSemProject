@@ -68,15 +68,17 @@
 
 
 <div class="container">
-    <p><a href="${pageContext.request.contextPath}/home">На главную</a> <a href="${pageContext.request.contextPath}/sprint/new">Создать спринт</a></p>
+    <c:if test="${isAdmin || isManager}">
+        <a href="${pageContext.request.contextPath}//sprint/new" class="btn btn-primary">Создать спринт</a><br><br>
+    </c:if>
     <h2>Список спринтов</h2>
     <table>
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Project</th>
-            <th>Start Date</th>
-            <th>End Date</th>
+            <th>Имя</th>
+            <th>Проект</th>
+            <th>Дата начала</th>
+            <th>Дата окончания</th>
         </tr>
         </thead>
         <tbody>
