@@ -32,8 +32,8 @@ public class ApplicationContextListener implements ServletContextListener {
 
             // Сервисы
             UserService userService = new UserServiceImpl(userRepository);
-            ProjectService projectService = new ProjectServiceImpl(projectRepository, sprintRepository, taskRepository);
-            SprintService sprintService = new SprintServiceImpl(sprintRepository, projectService);  // Зависит от projectService
+            ProjectService projectService = new ProjectServiceImpl(projectRepository, sprintRepository, taskRepository, userService);
+            SprintService sprintService = new SprintServiceImpl(sprintRepository, projectService);
             TaskService taskService = new TaskServiceImpl(taskRepository);
             CommentService commentService = new CommentServiceImpl(commentRepository);
             UserRoleService userRoleService = new UserRoleServiceImpl(userRoleRepository, roleRepository);

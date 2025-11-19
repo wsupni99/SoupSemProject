@@ -19,30 +19,52 @@
                 aria-controls="navbarContent" aria-expanded="false" aria-label="Переключить навигацию">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/home">Главная</a></li>
-                <li class="nav-item"><a class="nav-link active" aria-current="page" href="${pageContext.request.contextPath}/tasks">Задачи</a></li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/projects">Проекты</a></li>
-                <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a></li>
-                <c:if test="${isAdmin || isManager}">
-                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/users">Пользователи</a></li>
-                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/workload">Нагрузка</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/home">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page"
+                       href="${pageContext.request.contextPath}/tasks">Задачи</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/projects">Проекты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
+                </li>
+                <c:if test="${isAdmin}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/users">Пользователи</a>
+                    </li>
+                    <li class="nav-item">
                 </c:if>
             </ul>
+
             <ul class="navbar-nav ms-auto">
                 <c:if test="${not empty sessionScope.user}">
-                    <li class="nav-item"><span class="navbar-text me-3">Привет, ID: ${sessionScope.user.userId}</span></li>
-                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/logout">Выход</a></li>
+                    <li class="nav-item">
+                        <span class="navbar-text me-3">Привет, ID: ${sessionScope.user.userId}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/logout">Выход</a>
+                    </li>
                 </c:if>
                 <c:if test="${empty sessionScope.user}">
-                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/login">Вход</a></li>
-                    <li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/register">Регистрация</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/login">Вход</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/register">Регистрация</a>
+                    </li>
                 </c:if>
             </ul>
         </div>
     </div>
 </nav>
+
 
 <div class="container">
     <div class="table-container">

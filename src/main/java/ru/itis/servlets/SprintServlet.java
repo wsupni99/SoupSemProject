@@ -35,7 +35,6 @@ public class SprintServlet extends HttpServlet {
     private ProjectService projectService;
     private UserRoleService userRoleService;
 
-    @SuppressWarnings("unchecked")
     private Map<String, Object> getServices(ServletContext servletContext) {
         return (Map<String, Object>) servletContext.getAttribute("services");
     }

@@ -1,11 +1,15 @@
-package ru.itis.mappers;
+package ru.itis.mappers.project;
 
 import ru.itis.entities.Project;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProjectMapper {
+public final class ProjectMapper {
+
+    private ProjectMapper() {
+    }
+
     public static Project map(ResultSet rs) throws SQLException {
         return new Project(
                 rs.getLong("project_id"),

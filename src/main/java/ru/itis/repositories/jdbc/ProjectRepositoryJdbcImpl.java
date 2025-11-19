@@ -1,7 +1,7 @@
 package ru.itis.repositories.jdbc;
 
 import ru.itis.exceptions.InvalidDataException;
-import ru.itis.mappers.ProjectMapper;
+import ru.itis.mappers.project.ProjectMapper;
 import ru.itis.entities.Project;
 import ru.itis.repositories.interfaces.ProjectRepository;
 import ru.itis.util.DBUtil;
@@ -69,9 +69,8 @@ public class ProjectRepositoryJdbcImpl implements ProjectRepository {
 
     @Override
     public void update(Project project) {
-        String sql = SQL_UPDATE;
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
             ps.setString(1, project.getName());
             ps.setString(2, project.getDescription());
             ps.setDate(3, new java.sql.Date(project.getStartDate().getTime()));

@@ -60,41 +60,27 @@
 
         <div class="form-actions">
             <input type="submit" value="Сохранить" class="btn btn-primary">
-
-            <form id="delete-form" action="${pageContext.request.contextPath}/project/delete"
-                  method="post" style="margin-top:15px;">
-                <input type="hidden" name="id" value="${projectId}">
-                <button type="button" onclick="deleteProject()" class="btn btn-danger">Удалить проект</button>
-            </form>
         </div>
     </form>
+    <form id="delete-form"
+          action="${pageContext.request.contextPath}/sprint/delete"
+          method="post"
+          style="margin-top:15px;">
+        <input type="hidden" name="id" value="${sprintId}">
+        <button type="button" onclick="deleteSprint()" class="btn btn-danger">
+            Удалить спринт
+        </button>
+    </form>
 </div>
-
-<script>
-    function deleteProject() {
-        if (!confirm("Удалить проект?")) return;
-        const form = document.getElementById("delete-form");
-        const formData = new FormData(form);
-        const params = new URLSearchParams();
-        for (let [key, value] of formData.entries()) {
-            params.append(key, value);
-        }
-        fetch(form.action, {
-            method: "POST",
-            body: params,
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-            }
-        }).then(async resp => {
-            if (resp.redirected) {
-                window.location.href = resp.url;
-            } else {
-                const errorMsg = document.getElementById("error-message");
-                errorMsg.textContent = await resp.text();
-                errorMsg.style.display = "block";
-            }
-        });
-    }
-</script>
+<div id="error-message" class="form-error" style="display: none;"></div>
+<form id="delete-form"
+      action="${pageContext.request.contextPath}/sprint/delete"
+      method="post"
+      style="margin-top:15px;">
+    <input type="hidden" name="id" value="${sprintId}">
+    <button type="button" onclick="deleteSprint()" class="btn btn-danger">
+        Удалить спринт
+    </button>
+</form>
 </body>
 </html>
