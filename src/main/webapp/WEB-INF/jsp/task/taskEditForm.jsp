@@ -88,9 +88,20 @@
                 <div class="task-meta-item">
                     <span class="task-meta-label">Родительская задача</span>
                     <div class="task-meta-value">
-                        <input class="form-input" type="number"
-                               name="parentTaskId"
-                               value="${task.parentTaskId != null ? task.parentTaskId : ''}">
+                        <select class="form-select" name="parentTaskId">
+                            <option value="0"
+                                    <c:if test="${task.parentTaskId == null || task.parentTaskId == 0}">selected</c:if>>
+                                Нет
+                            </option>
+                            <c:forEach var="t" items="${projectTasks}">
+                                <c:if test="${t.taskId != task.taskId}">
+                                    <option value="${t.taskId}"
+                                            <c:if test="${t.taskId == task.parentTaskId}">selected</c:if>>
+                                        [${t.taskId}] ${t.name}
+                                    </option>
+                                </c:if>
+                            </c:forEach>
+                        </select>
                     </div>
                 </div>
             </div>

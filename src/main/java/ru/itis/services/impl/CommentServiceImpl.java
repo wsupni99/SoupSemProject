@@ -19,6 +19,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public void update(Comment updated) {
+        Comment existing = getById(updated.getCommentId());
+        existing.setTaskId(updated.getTaskId());
+        existing.setUserId(updated.getUserId());
+        existing.setText(updated.getText());
+        existing.setCreatedAt(updated.getCreatedAt());
+        commentRepository.save(existing);
+    }
+
+    @Override
+    public void delete(Long id) {
+        commentRepository.deleteById(id);
+    }
+
+    @Override
     public Comment getById(Long id) {
         return commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
@@ -33,20 +48,5 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> getAll() {
         return commentRepository.findAll();
-    }
-
-    @Override
-    public void update(Comment updated) {
-        Comment existing = getById(updated.getCommentId());
-        existing.setTaskId(updated.getTaskId());
-        existing.setUserId(updated.getUserId());
-        existing.setText(updated.getText());
-        existing.setCreatedAt(updated.getCreatedAt());
-        commentRepository.save(existing);
-    }
-
-    @Override
-    public void delete(Long id) {
-        commentRepository.deleteById(id);
     }
 }

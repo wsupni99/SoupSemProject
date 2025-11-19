@@ -26,6 +26,23 @@ public class UserRoleServiceImpl implements UserRoleService {
     }
 
     @Override
+    public void update(UserRole updated) {
+        userRoleRepository.update(updated);
+    }
+
+    @Override
+    public void delete(Long userId, Long roleId) {
+        UserRoleId id = new UserRoleId(userId, roleId);
+        userRoleRepository.deleteById(id);
+    }
+
+
+    @Override
+    public List<UserRole> findByUserId(Long userId) {
+        return userRoleRepository.findByUserId(userId);
+    }
+
+    @Override
     public UserRole getById(Long userId, Long roleId) {
         UserRoleId id = new UserRoleId(userId, roleId);
         return userRoleRepository.findById(id)
@@ -35,17 +52,6 @@ public class UserRoleServiceImpl implements UserRoleService {
     @Override
     public List<UserRole> getAll() {
         return userRoleRepository.findAll();
-    }
-
-    @Override
-    public void update(UserRole updated) {
-        userRoleRepository.update(updated);
-    }
-
-    @Override
-    public void delete(Long userId, Long roleId) {
-        UserRoleId id = new UserRoleId(userId, roleId);
-        userRoleRepository.deleteById(id);
     }
 
     @Override
@@ -96,6 +102,7 @@ public class UserRoleServiceImpl implements UserRoleService {
         return false;
     }
 
+    @Override
     public boolean userHasRole(Long userId, String roleName) {
         if (userId == null || roleName == null) {
             return false;
@@ -134,10 +141,4 @@ public class UserRoleServiceImpl implements UserRoleService {
         newRole.setRoleId(roleId);
         create(newRole);
     }
-
-    @Override
-    public List<UserRole> findByUserId(Long userId) {
-        return userRoleRepository.findByUserId(userId);
-    }
-
 }

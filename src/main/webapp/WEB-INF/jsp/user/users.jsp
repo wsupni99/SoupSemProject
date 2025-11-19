@@ -35,7 +35,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
                 </li>
-                <c:if test="${isAdmin || isManager}">
+                <c:if test="${isAdmin}">
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page"
                            href="${pageContext.request.contextPath}/users">Пользователи</a>

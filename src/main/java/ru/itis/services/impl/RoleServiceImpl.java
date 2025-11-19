@@ -21,17 +21,6 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role getById(Long id) {
-        return roleRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
-    }
-
-    @Override
-    public List<Role> getAll() {
-        return roleRepository.findAll();
-    }
-
-    @Override
     public void update(Role updated) {
         Role existing = getById(updated.getRoleId());
         existing.setRoleName(updated.getRoleName());
@@ -45,8 +34,18 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
+    public Role getById(Long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found"));
+    }
+
+    @Override
     public Optional<Long> getRoleIdByName(String name) {
         return roleRepository.findByName(name).map(Role::getRoleId);
     }
 
+    @Override
+    public List<Role> getAll() {
+        return roleRepository.findAll();
+    }
 }

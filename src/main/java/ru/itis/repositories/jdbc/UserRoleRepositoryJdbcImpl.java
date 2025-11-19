@@ -95,6 +95,7 @@ public class UserRoleRepositoryJdbcImpl implements UserRoleRepository {
         }
     }
 
+    // Лучше пересоздать аккаунт с новой ролью
     @Override
     public void update(UserRole ur) {
         throw new UnsupportedOperationException("Операция update для таблиц с составным ключом не поддерживается");

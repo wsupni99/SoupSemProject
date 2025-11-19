@@ -46,17 +46,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getSubTasks(Long parentTaskId) {
-        return taskRepository.findByParentTaskId(parentTaskId);
-    }
-
-    @Override
-    public List<Task> getBySprintId(Long sprintId) {
-        return taskRepository.findBySprintId(sprintId);
-    }
-
-    @Override
-    public Object getByProjectId(Long id) {
+    public List<Task> getByProjectId(Long id) {
         return taskRepository.findByProjectId(id);
     }
 

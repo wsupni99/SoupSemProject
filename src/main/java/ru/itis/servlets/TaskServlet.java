@@ -97,17 +97,22 @@ public class TaskServlet extends HttpServlet {
         if ("/task/newWithProject".equals(path)) {
             String projectIdStr = req.getParameter("id");
             if (projectIdStr == null || projectIdStr.isEmpty()) {
-                throw new InvalidDataException("Не указан ID проекта");
+                throw new InvalidDataException("ID проекта не указан");
             }
 
             Long projectId = Long.parseLong(projectIdStr);
+
             List<User> users = userService.getAllUsers();
             List<Sprint> sprints = sprintService.getByProjectId(projectId);
+            List<Task> projectTasks = taskService.getByProjectId(projectId);
 
             req.setAttribute("users", users);
             req.setAttribute("sprints", sprints);
             req.setAttribute("projectId", projectId);
-            req.getRequestDispatcher("/WEB-INF/jsp/task/taskNewForm.jsp").forward(req, resp);
+            req.setAttribute("projectTasks", projectTasks);
+
+            req.getRequestDispatcher("/WEB-INF/jsp/task/taskNewForm.jsp")
+                    .forward(req, resp);
             return;
         }
 
@@ -207,6 +212,7 @@ public class TaskServlet extends HttpServlet {
             List<Sprint> sprints = sprintService.getByProjectId(task.getProjectId());
             List<User> users = userService.getAllUsers();
             List<Comment> comments = commentService.getByTaskId(taskId);
+            List<Task> projectTasks = taskService.getByProjectId(task.getProjectId());
 
             String taskUserName = "";
             for (User user : users) {
@@ -221,6 +227,8 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("users", users);
             req.setAttribute("taskUserName", taskUserName);
             req.setAttribute("comments", comments);
+            req.setAttribute("projectTasks", projectTasks);
+
             req.getRequestDispatcher("/WEB-INF/jsp/task/taskEditForm.jsp").forward(req, resp);
             return;
         }

@@ -24,17 +24,6 @@ public class SprintServiceImpl implements SprintService {
     }
 
     @Override
-    public Sprint getById(Long id) {
-        return sprintRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Sprint not found"));
-    }
-
-    @Override
-    public List<Sprint> getAll() {
-        return sprintRepository.findAll();
-    }
-
-    @Override
     public void update(Sprint sprint) {
         sprintRepository.update(sprint);
     }
@@ -45,8 +34,9 @@ public class SprintServiceImpl implements SprintService {
     }
 
     @Override
-    public List<Sprint> getAllSprints() {
-        return sprintRepository.findAll();
+    public Sprint getById(Long id) {
+        return sprintRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Sprint not found"));
     }
 
     @Override
@@ -63,5 +53,15 @@ public class SprintServiceImpl implements SprintService {
             throw new EntityNotFoundException("Project not found");
         }
         return project.getName();
+    }
+
+    @Override
+    public List<Sprint> getAllSprints() {
+        return sprintRepository.findAll();
+    }
+
+    @Override
+    public List<Sprint> getAll() {
+        return sprintRepository.findAll();
     }
 }

@@ -128,7 +128,6 @@ tr:hover {
     background-color: #f8f9fa;
 }
 
-/* Кнопки */
 .btn {
     display: inline-block;
     padding: 8px 16px;
@@ -552,3 +551,17 @@ body.auth-page {
         width: 100%;
     }
 }
+
+.form-input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-input[type="date"] {
+    padding: 8px 10px;
+    font-size: 14px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background-color: #fff;
+}
+

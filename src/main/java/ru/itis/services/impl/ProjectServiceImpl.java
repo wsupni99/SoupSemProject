@@ -76,7 +76,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void update(Long id, ProjectRequestDto dto) {
         Project existing = projectRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Проект не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Project not found"));
         existing.setName(dto.getName());
         existing.setDescription(dto.getDescription());
         existing.setStartDate(dto.getStartDate());

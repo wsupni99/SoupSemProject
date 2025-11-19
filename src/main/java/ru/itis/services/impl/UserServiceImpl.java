@@ -48,28 +48,29 @@ public class UserServiceImpl implements UserService {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+
     @Override
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
-    @Override
-    public void createUser(User user) {
-        userRepository.save(user);
-    }
+
     @Override
     public void updateUser(User user) {
         userRepository.update(user);
     }
+
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
     @Override
     public Optional<User> getByEmail(String login){
         return userRepository.findByEmail(login);
     }
+
     @Override
     public List<User> getAllManagers() {
-        return userRepository.findByRole(2L);
+        return userRepository.findByRole(2L); // Хардкод: менеджер в БД - 2
     }
 }

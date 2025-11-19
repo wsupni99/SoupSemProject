@@ -77,7 +77,14 @@
                     <div class="task-meta-item">
                         <span class="task-meta-label">Родительская задача</span>
                         <div class="task-meta-value">
-                            <input class="form-input" type="number" name="parentTaskId" value="0">
+                            <select class="form-select" name="parentTaskId">
+                                <option value="0">Нет</option>
+                                <c:forEach var="task" items="${projectTasks}">
+                                    <option value="${task.taskId}">
+                                        [${task.taskId}] ${task.name}
+                                    </option>
+                                </c:forEach>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -93,8 +100,6 @@
                     <input type="submit" value="Создать" class="btn btn-primary">
                 </div>
             </div>
-
-            <!-- справа можно будет добавить превью комментариев при желании -->
         </div>
     </form>
 </div>
