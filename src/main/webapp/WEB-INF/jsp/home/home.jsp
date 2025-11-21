@@ -27,12 +27,16 @@
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/tasks">Задачи</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/projects">Проекты</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
-                </li>
+                <c:if test="${isAdmin || isManager}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/projects">Проекты</a>
+                    </li>
+                </c:if>
+                <c:if test="${isAdmin || isManager}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
+                    </li>
+                </c:if>
                 <c:if test="${isAdmin}">
                     <li class="nav-item">
                         <a class="nav-link" href="${pageContext.request.contextPath}/users">Пользователи</a>
@@ -88,11 +92,13 @@
                                 <i class="bi bi-check-circle me-2"></i>К задачам
                             </a>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <a href="${pageContext.request.contextPath}/projects" class="btn btn-outline-primary btn-lg mb-3 w-100">
-                                <i class="bi bi-folder me-2"></i>К проектам
-                            </a>
-                        </div>
+                        <c:if test="${isAdmin || isManager}">
+                            <div class="col-12 col-md-6">
+                                <a href="${pageContext.request.contextPath}/projects" class="btn btn-outline-primary btn-lg mb-3 w-100">
+                                    <i class="bi bi-folder me-2"></i>К проектам
+                                </a>
+                            </div>
+                        </c:if>
                     </div>
 
                     <div class="nav-section">
@@ -101,12 +107,16 @@
                             <div class="col-md-6">
                                 <ul class="list-unstyled text-start">
                                     <li class="mb-2"><a href="${pageContext.request.contextPath}/tasks">📋 Задачи</a></li>
-                                    <li class="mb-2"><a href="${pageContext.request.contextPath}/projects">📁 Проекты</a></li>
+                                    <c:if test="${isAdmin || isManager}">
+                                        <li class="mb-2"><a href="${pageContext.request.contextPath}/projects">📁 Проекты</a></li>
+                                    </c:if>
                                 </ul>
                             </div>
                             <div class="col-md-6">
                                 <ul class="list-unstyled text-start">
-                                    <li class="mb-2"><a href="${pageContext.request.contextPath}/sprints">⏱️ Спринты</a></li>
+                                <c:if test="${isAdmin || isManager}">
+                                        <li class="mb-2"><a href="${pageContext.request.contextPath}/sprints">⏱️ Спринты</a></li>
+                                </c:if>
                                     <c:if test="${isAdmin}">
                                         <li class="mb-2"><a href="${pageContext.request.contextPath}/users">👥 Пользователи</a></li>
                                     </c:if>

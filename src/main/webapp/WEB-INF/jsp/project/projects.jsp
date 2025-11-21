@@ -27,13 +27,17 @@
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}/tasks">Задачи</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"
-                       href="${pageContext.request.contextPath}/projects">Проекты</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
-                </li>
+                <c:if test="${isAdmin || isManager}">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page"
+                           href="${pageContext.request.contextPath}/projects">Проекты</a>
+                    </li>
+                </c:if>
+                <c:if test="${isAdmin || isManager}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="${pageContext.request.contextPath}/sprints">Спринты</a>
+                    </li>
+                </c:if>
                 <c:if test="${isAdmin}">
                     <li class="nav-item">
                         <a class="nav-link" href="${pageContext.request.contextPath}/users">Пользователи</a>
