@@ -113,7 +113,8 @@ public class RolesFilter implements Filter {
             }
 
             if (path.equals("/task") && req.getParameter("id") != null) {
-                if (!(isDeveloper || isTester)) {
+                // карточка задачи доступна менеджеру, админу, деву и тестеру
+                if (!(isAdmin || isManager || isDeveloper || isTester)) {
                     resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                     return;
                 }

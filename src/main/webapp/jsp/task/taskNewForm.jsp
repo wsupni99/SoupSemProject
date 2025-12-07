@@ -98,6 +98,7 @@
 
                 <div class="form-actions">
                     <input type="submit" value="Создать" class="btn btn-primary">
+                    <a href="${pageContext.request.contextPath}/tasks" class="btn btn-secondary">Отмена</a>
                 </div>
             </div>
         </div>

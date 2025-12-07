@@ -67,12 +67,10 @@
                         </c:choose>
                     </div>
                 </div>
-            </div>
 
-            <div class="task-meta-panel">
-                <div class="task-meta-item">
-                    <span class="task-meta-label">Дедлайн</span>
-                    <div class="task-meta-value">
+                <div class="form-group">
+                    <label class="form-label">Дедлайн:</label>
+                    <div class="field-static">
                         <c:choose>
                             <c:when test="${not empty task.deadline}">
                                 ${task.deadline}
@@ -82,9 +80,9 @@
                     </div>
                 </div>
 
-                <div class="task-meta-item">
-                    <span class="task-meta-label">Родительская задача</span>
-                    <div class="task-meta-value">
+                <div class="form-group">
+                    <label class="form-label">Родительская задача:</label>
+                    <div class="field-static">
                         <c:choose>
                             <c:when test="${task.parentTaskId != null && task.parentTaskId != 0}">
                                 ${task.parentTaskId}
@@ -93,9 +91,7 @@
                         </c:choose>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-grid-1">
                 <div class="form-group">
                     <label class="form-label">Описание:</label>
                     <div class="field-static multiline">
@@ -103,13 +99,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="form-actions">
-                <input type="button"
-                       value="Назад"
-                       class="btn btn-secondary"
-                       onclick="history.back();">
-            </div>
+            <a href="${pageContext.request.contextPath}/tasks" class="btn btn-secondary">Назад</a>
         </c:if>
 
         <c:if test="${empty task}">
@@ -117,6 +107,7 @@
         </c:if>
     </div>
 </div>
+
 <div class="task-edit-comments">
     <div class="task-comments-card">
         <h3 class="comments-header">Комментарии</h3>

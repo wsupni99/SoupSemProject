@@ -75,38 +75,30 @@
                         <option value="отложена"  <c:if test="${task.status == 'отложена'}">selected</c:if>>Отложена</option>
                     </select>
                 </div>
-            </div>
 
-            <div class="task-meta-panel">
-                <div class="task-meta-item">
-                    <span class="task-meta-label">Дедлайн</span>
-                    <div class="task-meta-value">
-                        <input class="form-input" type="date" name="deadline" value="${task.deadline}">
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Дедлайн:</label>
+                    <input class="form-input" type="date" name="deadline" value="${task.deadline}">
                 </div>
 
-                <div class="task-meta-item">
-                    <span class="task-meta-label">Родительская задача</span>
-                    <div class="task-meta-value">
-                        <select class="form-select" name="parentTaskId">
-                            <option value="0"
-                                    <c:if test="${task.parentTaskId == null || task.parentTaskId == 0}">selected</c:if>>
-                                Нет
-                            </option>
-                            <c:forEach var="t" items="${projectTasks}">
-                                <c:if test="${t.taskId != task.taskId}">
-                                    <option value="${t.taskId}"
-                                            <c:if test="${t.taskId == task.parentTaskId}">selected</c:if>>
-                                        [${t.taskId}] ${t.name}
-                                    </option>
-                                </c:if>
-                            </c:forEach>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label class="form-label">Родительская задача:</label>
+                    <select class="form-select" name="parentTaskId">
+                        <option value="0"
+                                <c:if test="${task.parentTaskId == null || task.parentTaskId == 0}">selected</c:if>>
+                            Нет
+                        </option>
+                        <c:forEach var="t" items="${projectTasks}">
+                            <c:if test="${t.taskId != task.taskId}">
+                                <option value="${t.taskId}"
+                                        <c:if test="${t.taskId == task.parentTaskId}">selected</c:if>>
+                                    [${t.taskId}] ${t.name}
+                                </option>
+                            </c:if>
+                        </c:forEach>
+                    </select>
                 </div>
-            </div>
 
-            <div class="form-grid-1">
                 <div class="form-group">
                     <label class="form-label">Описание:</label>
                     <textarea class="form-textarea" name="description" required>${task.description}</textarea>
