@@ -64,7 +64,7 @@ public class SprintServlet extends HttpServlet {
 
         if ("/sprint/new".equals(path)) {
             req.setAttribute("projects", projectService.getAll());
-            req.getRequestDispatcher("/WEB-INF/jsp/sprint/sprintNewForm.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/sprint/sprintNewForm.jsp").forward(req, resp);
         }
 
         if ("/sprints".equals(path)) {
@@ -77,7 +77,7 @@ public class SprintServlet extends HttpServlet {
             }
             req.setAttribute("sprints", sprints);
             req.setAttribute("projectNames", projectNames);
-            req.getRequestDispatcher("/WEB-INF/jsp/sprint/sprints.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/sprint/sprints.jsp").forward(req, resp);
         }
 
         if ("/sprint/edit".equals(path)) {
@@ -90,7 +90,7 @@ public class SprintServlet extends HttpServlet {
             List<Project> projects = projectService.getAll();
             req.setAttribute("sprint", sprint);
             req.setAttribute("projects", projects);
-            req.getRequestDispatcher("/WEB-INF/jsp/sprint/sprintEditForm.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/sprint/sprintEditForm.jsp").forward(req, resp);
         }
     }
 

@@ -61,13 +61,13 @@ public class ProjectServlet extends HttpServlet {
         if ("/projects".equals(path)) {
             List<ProjectResponseDto> list = projectService.getAllWithManagerName();
             req.setAttribute("projects", list);
-            req.getRequestDispatcher("/WEB-INF/jsp/project/projects.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/project/projects.jsp").forward(req, resp);
             return;
         }
 
         if ("/project/new".equals(path)) {
             req.setAttribute("managers", userService.getAllManagers());
-            req.getRequestDispatcher("/WEB-INF/jsp/project/projectNewForm.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/project/projectNewForm.jsp").forward(req, resp);
             return;
         }
         if ("/project/edit".equals(path)) {
@@ -87,7 +87,7 @@ public class ProjectServlet extends HttpServlet {
                 req.setAttribute("projectStatus", project.getStatus());
                 req.setAttribute("projectManagerId", project.getManagerId());
                 req.setAttribute("managers", userService.getAllManagers());
-                req.getRequestDispatcher("/WEB-INF/jsp/project/projectEditForm.jsp").forward(req, resp);
+                req.getRequestDispatcher("/jsp/project/projectEditForm.jsp").forward(req, resp);
             } catch (NumberFormatException e) {
                 resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid project ID format");
             } catch (EntityNotFoundException e) {
@@ -211,7 +211,7 @@ public class ProjectServlet extends HttpServlet {
             }
             req.setAttribute("projects", list);
             req.setAttribute("managerNames", managerNames);
-            req.getRequestDispatcher("/WEB-INF/jsp/project/projects.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/project/projects.jsp").forward(req, resp);
             return;
         }
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);

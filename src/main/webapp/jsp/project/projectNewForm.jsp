@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Создание проекта</title>
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/styles.css?v=1">
+          href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body class="form-page">
 <div class="form-card">

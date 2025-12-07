@@ -114,58 +114,54 @@
             </div>
 
             <div class="form-actions">
-                <input type="button" value="Назад" class="btn btn-secondary" onclick="history.back();">
+                <a href="${pageContext.request.contextPath}/tasks" class="btn btn-secondary">Отмена</a>
                 <input type="submit" value="Сохранить" class="btn btn-primary">
             </div>
         </form>
     </div>
-
-    <div class="task-edit-comments">
-        <div class="task-comments-card">
-            <h3 class="comments-header">Комментарии</h3>
-
-            <c:if test="${empty comments}">
-                <p class="comment-text">Нет комментариев</p>
-            </c:if>
-
-            <div class="task-comments-list">
-                <ul class="comments-list">
-                    <c:forEach var="comment" items="${comments}">
-                        <li class="task-comment-item">
-                            <p class="comment-meta">
-                                <b>
-                                    <c:forEach var="user" items="${users}">
-                                        <c:if test="${user.userId == comment.userId}">
-                                            ${user.name}
-                                        </c:if>
-                                    </c:forEach>
-                                </b>
-                                <span class="task-comment-date">(${comment.createdAt})</span>
-                            </p>
-                            <p class="comment-text task-comment-text">${comment.text}</p>
-                        </li>
-                    </c:forEach>
-                </ul>
-            </div>
-
-            <h3 class="comments-header" style="margin-top: 12px;">Добавить комментарий</h3>
-            <form method="post" action="${pageContext.request.contextPath}/task/addComment" class="task-comment-form">
-                <input type="hidden" name="taskId" value="${task.taskId}">
-                <div class="form-group">
-                    <textarea class="form-textarea" name="text" required placeholder="Текст комментария"></textarea>
-                </div>
-                <div class="form-actions" style="justify-content: flex-end;">
-                    <input type="submit" value="Добавить комментарий" class="btn btn-primary btn-comment-submit">
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
-<script>
-    document.getElementById('parentTaskId')?.addEventListener('input', function () {
-        if (this.value === '0') this.value = '';
-    });
-</script>
+<div class="task-edit-comments">
+    <div class="task-comments-card">
+        <h3 class="comments-header">Комментарии</h3>
+
+        <c:if test="${empty comments}">
+            <p class="comment-text">Нет комментариев</p>
+        </c:if>
+
+        <div class="task-comments-list">
+            <ul class="comments-list">
+                <c:forEach var="comment" items="${comments}">
+                    <li class="task-comment-item">
+                        <p class="comment-meta">
+                            <b>
+                                <c:forEach var="user" items="${users}">
+                                    <c:if test="${user.userId == comment.userId}">
+                                        ${user.name}
+                                    </c:if>
+                                </c:forEach>
+                            </b>
+                            <span class="task-comment-date">(${comment.createdAt})</span>
+                        </p>
+                        <p class="comment-text task-comment-text">${comment.text}</p>
+                    </li>
+                </c:forEach>
+            </ul>
+        </div>
+
+        <h3 class="comments-header" style="margin-top: 12px;">Добавить комментарий</h3>
+        <form method="post" action="${pageContext.request.contextPath}/task/addComment" class="task-comment-form">
+            <input type="hidden" name="taskId" value="${task.taskId}">
+            <div class="form-group">
+                <label>
+                    <textarea class="form-textarea" name="text" required placeholder="Текст комментария"></textarea>
+                </label>
+            </div>
+            <div class="form-actions" style="justify-content: flex-end;">
+                <input type="submit" value="Добавить комментарий" class="btn btn-primary btn-comment-submit">
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>

@@ -83,14 +83,14 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("users", users);
             req.setAttribute("projects", projects);
             req.setAttribute("sprints", sprints);
-            req.getRequestDispatcher("/WEB-INF/jsp/task/tasks.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/task/tasks.jsp").forward(req, resp);
             return;
         }
 
         if ("/task/new".equals(path)) {
             List<Project> projects = projectService.getAll();
             req.setAttribute("projects", projects);
-            req.getRequestDispatcher("/WEB-INF/jsp/task/taskChooseProject.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/task/taskChooseProject.jsp").forward(req, resp);
             return;
         }
 
@@ -111,7 +111,7 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("projectId", projectId);
             req.setAttribute("projectTasks", projectTasks);
 
-            req.getRequestDispatcher("/WEB-INF/jsp/task/taskNewForm.jsp")
+            req.getRequestDispatcher("/jsp/task/taskNewForm.jsp")
                     .forward(req, resp);
             return;
         }
@@ -119,21 +119,19 @@ public class TaskServlet extends HttpServlet {
         if ("/task".equals(path)) {
             String idStr = req.getParameter("id");
             if (idStr == null || idStr.isEmpty()) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID задачи обязателен");
+                resp.sendRedirect(req.getContextPath() + "/error/404");
                 return;
             }
-
             Long taskId;
             try {
                 taskId = Long.parseLong(idStr);
             } catch (NumberFormatException e) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Неверный формат ID задачи");
+                resp.sendRedirect(req.getContextPath() + "/error/404");
                 return;
             }
-
             Task task = taskService.getById(taskId);
             if (task == null) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Задача не найдена");
+                resp.sendRedirect(req.getContextPath() + "/error/404");
                 return;
             }
 
@@ -186,9 +184,9 @@ public class TaskServlet extends HttpServlet {
                 User currentUser = (User) session.getAttribute("user");
                 Long currentUserId = currentUser.getUserId();
                 if (userRoleService.isManager(currentUserId) || userRoleService.isAdmin(currentUserId)) {
-                    req.getRequestDispatcher("/WEB-INF/jsp/task/taskEditForm.jsp").forward(req, resp);
+                    req.getRequestDispatcher("/jsp/task/taskEditForm.jsp").forward(req, resp);
                 } else {
-                    req.getRequestDispatcher("/WEB-INF/jsp/task/taskViewForm.jsp").forward(req, resp);
+                    req.getRequestDispatcher("/jsp/task/taskViewForm.jsp").forward(req, resp);
                 }
             } else {
                 resp.sendRedirect(req.getContextPath() + "/login");
@@ -229,7 +227,7 @@ public class TaskServlet extends HttpServlet {
             req.setAttribute("comments", comments);
             req.setAttribute("projectTasks", projectTasks);
 
-            req.getRequestDispatcher("/WEB-INF/jsp/task/taskEditForm.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/task/taskEditForm.jsp").forward(req, resp);
             return;
         }
 

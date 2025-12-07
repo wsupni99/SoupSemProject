@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Редактирование спринта</title>
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/styles.css?v=1">
+          href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body class="form-page">
 <div class="form-card">
@@ -49,17 +49,17 @@
 
         <div class="form-actions">
             <input type="submit" value="Сохранить" class="btn btn-primary">
+            <a href="${pageContext.request.contextPath}/sprints" class="btn btn-secondary">Отмена</a>
+            <form id="delete-form"
+                  action="${pageContext.request.contextPath}/sprint/delete"
+                  method="post"
+                  style="margin-top:15px;">
+                <input type="hidden" name="id" value="${sprint.sprintId}">
+                <button type="button" onclick="deleteSprint()" class="btn btn-danger">
+                    Удалить спринт
+                </button>
+            </form>
         </div>
-    </form>
-
-    <form id="delete-form"
-          action="${pageContext.request.contextPath}/sprint/delete"
-          method="post"
-          style="margin-top:15px;">
-        <input type="hidden" name="id" value="${sprint.sprintId}">
-        <button type="button" onclick="deleteSprint()" class="btn btn-danger">
-            Удалить спринт
-        </button>
     </form>
 </div>
 

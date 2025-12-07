@@ -38,12 +38,11 @@ public class AuthServlet extends HttpServlet {
         if (userService == null || userRoleService == null) {
             throw new RuntimeException("Auth services failed to initialize");
         }
-        System.out.println("AuthServlet services initialized");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(req, resp);
+        req.getRequestDispatcher("/jsp/auth/login.jsp").forward(req, resp);
     }
 
     @Override
@@ -54,7 +53,7 @@ public class AuthServlet extends HttpServlet {
 
         if (email == null || password == null || email.trim().isEmpty() || password.trim().isEmpty()) {
             req.setAttribute("error", "Email and password are required");
-            req.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/auth/login.jsp").forward(req, resp);
             return;
         }
 
@@ -69,6 +68,6 @@ public class AuthServlet extends HttpServlet {
         }
 
         req.setAttribute("error", "Invalid email or password");
-        req.getRequestDispatcher("/WEB-INF/jsp/auth/login.jsp").forward(req, resp);
+        req.getRequestDispatcher("/jsp/auth/login.jsp").forward(req, resp);
     }
 }

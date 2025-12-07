@@ -50,7 +50,7 @@ public class RegisterServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Project> projects = projectService.getAll();
         req.setAttribute("projects", projects);
-        req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+        req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class RegisterServlet extends HttpServlet {
             req.setAttribute("error", "Select a role");
             List<Project> projects = projectService.getAll();
             req.setAttribute("projects", projects);
-            req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
             return;
         }
 
@@ -78,7 +78,7 @@ public class RegisterServlet extends HttpServlet {
                 req.setAttribute("error", "For manager, select a project");
                 List<Project> projects = projectService.getAll();
                 req.setAttribute("projects", projects);
-                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
                 return;
             }
             try {
@@ -87,7 +87,7 @@ public class RegisterServlet extends HttpServlet {
                 req.setAttribute("error", "Invalid project ID");
                 List<Project> projects = projectService.getAll();
                 req.setAttribute("projects", projects);
-                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
                 return;
             }
         }
@@ -97,7 +97,7 @@ public class RegisterServlet extends HttpServlet {
                 req.setAttribute("error", "Email already registered");
                 List<Project> projects = projectService.getAll();
                 req.setAttribute("projects", projects);
-                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
                 return;
             }
 
@@ -109,7 +109,7 @@ public class RegisterServlet extends HttpServlet {
                 req.setAttribute("error", "Registration error");
                 List<Project> projects = projectService.getAll();
                 req.setAttribute("projects", projects);
-                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
                 return;
             }
             User user = createdOpt.get();
@@ -119,7 +119,7 @@ public class RegisterServlet extends HttpServlet {
                 req.setAttribute("error", "Invalid role: " + roleName);
                 List<Project> projects = projectService.getAll();
                 req.setAttribute("projects", projects);
-                req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
                 return;
             }
             Long roleId = roleIdOpt.get();
@@ -138,7 +138,7 @@ public class RegisterServlet extends HttpServlet {
                     req.setAttribute("error", "Project not found");
                     List<Project> projects = projectService.getAll();
                     req.setAttribute("projects", projects);
-                    req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+                    req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
                     return;
                 }
                 project.setManagerId(user.getUserId());
@@ -150,7 +150,7 @@ public class RegisterServlet extends HttpServlet {
             req.setAttribute("error", "Registration error: " + e.getMessage());
             List<Project> projects = projectService.getAll();
             req.setAttribute("projects", projects);
-            req.getRequestDispatcher("/WEB-INF/jsp/auth/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/auth/register.jsp").forward(req, resp);
         }
     }
 

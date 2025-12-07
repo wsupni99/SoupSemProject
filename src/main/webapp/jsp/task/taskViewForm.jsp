@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <title>Просмотр задачи</title>
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/css/styles.css?v=1">
+          href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body class="form-page">
 <div class="form-card task-edit-layout">
@@ -24,9 +24,7 @@
                             <c:when test="${not empty sprintName}">
                                 ${sprintName}
                             </c:when>
-                            <c:otherwise>
-                                Не указан
-                            </c:otherwise>
+                            <c:otherwise>Не указан</c:otherwise>
                         </c:choose>
                     </div>
                 </div>
@@ -38,9 +36,7 @@
                             <c:when test="${not empty taskUserName}">
                                 ${taskUserName}
                             </c:when>
-                            <c:otherwise>
-                                Не назначен
-                            </c:otherwise>
+                            <c:otherwise>Не назначен</c:otherwise>
                         </c:choose>
                     </div>
                 </div>
@@ -52,16 +48,12 @@
 
                 <div class="form-group">
                     <label class="form-label">Приоритет:</label>
-                    <div class="field-static">
-                            ${task.priority}
-                    </div>
+                    <div class="field-static">${task.priority}</div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Статус:</label>
-                    <div class="field-static">
-                            ${task.status}
-                    </div>
+                    <div class="field-static">${task.status}</div>
                 </div>
 
                 <div class="form-group">
@@ -71,16 +63,13 @@
                             <c:when test="${not empty projectName}">
                                 ${projectName}
                             </c:when>
-                            <c:otherwise>
-                                Не указан
-                            </c:otherwise>
+                            <c:otherwise>Не указан</c:otherwise>
                         </c:choose>
                     </div>
                 </div>
             </div>
 
             <div class="task-meta-panel">
-
                 <div class="task-meta-item">
                     <span class="task-meta-label">Дедлайн</span>
                     <div class="task-meta-value">
@@ -88,9 +77,7 @@
                             <c:when test="${not empty task.deadline}">
                                 ${task.deadline}
                             </c:when>
-                            <c:otherwise>
-                                Не указан
-                            </c:otherwise>
+                            <c:otherwise>Не указан</c:otherwise>
                         </c:choose>
                     </div>
                 </div>
@@ -102,9 +89,7 @@
                             <c:when test="${task.parentTaskId != null && task.parentTaskId != 0}">
                                 ${task.parentTaskId}
                             </c:when>
-                            <c:otherwise>
-                                Нет
-                            </c:otherwise>
+                            <c:otherwise>Нет</c:otherwise>
                         </c:choose>
                     </div>
                 </div>
@@ -114,29 +99,33 @@
                 <div class="form-group">
                     <label class="form-label">Описание:</label>
                     <div class="field-static multiline">
-                            ${task.description}
+                        <c:out value="${task.description}"/>
                     </div>
                 </div>
             </div>
 
             <div class="form-actions">
-                <input type="button" value="Назад" class="btn btn-secondary" onclick="history.back();">
+                <input type="button"
+                       value="Назад"
+                       class="btn btn-secondary"
+                       onclick="history.back();">
             </div>
         </c:if>
 
         <c:if test="${empty task}">
-            <p class="field-row">Задача не найдена.</p>
+            <p class="field-static">Задача не найдена.</p>
         </c:if>
     </div>
+</div>
+<div class="task-edit-comments">
+    <div class="task-comments-card">
+        <h3 class="comments-header">Комментарии</h3>
 
-    <div class="task-edit-comments">
-        <div class="task-comments-card">
-            <h3 class="comments-header">Комментарии</h3>
+        <c:if test="${empty comments}">
+            <p class="comment-text">Нет комментариев</p>
+        </c:if>
 
-            <c:if test="${empty comments}">
-                <p class="comment-text">Нет комментариев</p>
-            </c:if>
-
+        <c:if test="${not empty comments}">
             <div class="task-comments-list">
                 <ul class="comments-list">
                     <c:forEach var="comment" items="${comments}">
@@ -151,23 +140,32 @@
                                 </b>
                                 <span class="task-comment-date">(${comment.createdAt})</span>
                             </p>
-                            <p class="comment-text task-comment-text">${comment.text}</p>
+                            <p class="comment-text task-comment-text">
+                                    ${comment.text}
+                            </p>
                         </li>
                     </c:forEach>
                 </ul>
             </div>
+        </c:if>
 
-            <h3 class="comments-header" style="margin-top: 12px;">Добавить комментарий</h3>
-            <form method="post" action="${pageContext.request.contextPath}/task/addComment" class="task-comment-form">
-                <input type="hidden" name="taskId" value="${task.taskId}">
-                <div class="form-group">
-                    <textarea class="form-textarea" name="text" required placeholder="Текст комментария"></textarea>
-                </div>
-                <div class="form-actions" style="justify-content: flex-end;">
-                    <input type="submit" value="Добавить комментарий" class="btn btn-primary btn-comment-submit">
-                </div>
-            </form>
-        </div>
+        <h3 class="comments-header" style="margin-top: 12px;">Добавить комментарий</h3>
+        <form method="post"
+              action="${pageContext.request.contextPath}/task/addComment"
+              class="task-comment-form">
+            <input type="hidden" name="taskId" value="${task.taskId}">
+            <div class="form-group">
+                    <textarea class="form-textarea"
+                              name="text"
+                              required
+                              placeholder="Текст комментария"></textarea>
+            </div>
+            <div class="form-actions" style="justify-content: flex-end;">
+                <input type="submit"
+                       value="Добавить комментарий"
+                       class="btn btn-primary btn-comment-submit">
+            </div>
+        </form>
     </div>
 </div>
 </body>

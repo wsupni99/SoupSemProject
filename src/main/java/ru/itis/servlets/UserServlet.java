@@ -80,7 +80,7 @@ public class UserServlet extends HttpServlet {
             }
             req.setAttribute("users", users);
             req.setAttribute("roleMap", roleMap);
-            req.getRequestDispatcher("/WEB-INF/jsp/user/users.jsp").forward(req, resp);
+            req.getRequestDispatcher("/jsp/user/users.jsp").forward(req, resp);
             return;
         }
 
