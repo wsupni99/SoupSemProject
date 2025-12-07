@@ -56,6 +56,7 @@
 
         <div class="form-actions">
             <input type="submit" value="Создать" class="btn btn-primary">
+            <button type="button" class="btn btn-secondary" onclick="history.back()">Назад</button>
         </div>
     </form>
 </div>

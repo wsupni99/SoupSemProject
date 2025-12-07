@@ -106,7 +106,7 @@
             </div>
 
             <div class="form-actions">
-                <a href="${pageContext.request.contextPath}/tasks" class="btn btn-secondary">Отмена</a>
+                <button type="button" class="btn btn-secondary" onclick="history.back()">Назад</button>
                 <input type="submit" value="Сохранить" class="btn btn-primary">
             </div>
         </form>

@@ -28,6 +28,11 @@ public class RolesFilter implements Filter {
         this.userRoleService = new UserRoleServiceImpl(userRoleRepo, roleRepo);
     }
 
+    private void forward403(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        req.getRequestDispatcher("/jsp/error/403.jsp").forward(req, resp);
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -78,14 +83,14 @@ public class RolesFilter implements Filter {
 
         // users только админ
         if (path.startsWith("/users")) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            forward403(req, resp);
             return;
         }
 
         // projects: менеджер или админ
         if (path.startsWith("/projects") || path.startsWith("/project")) {
             if (!(isManager || isAdmin)) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                forward403(req, resp);
                 return;
             }
         }
@@ -93,11 +98,10 @@ public class RolesFilter implements Filter {
         // sprints: менеджер или админ
         if (path.startsWith("/sprints") || path.startsWith("/sprint")) {
             if (!(isManager || isAdmin)) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                forward403(req, resp);
                 return;
             }
         }
-
 
         if (path.startsWith("/tasks") || path.startsWith("/task")) {
             // формы задач только менеджеру
@@ -107,15 +111,14 @@ public class RolesFilter implements Filter {
                     || path.startsWith("/task/newWithProject")) {
 
                 if (!isManagerOnly) {
-                    resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    forward403(req, resp);
                     return;
                 }
             }
 
             if (path.equals("/task") && req.getParameter("id") != null) {
-                // карточка задачи доступна менеджеру, админу, деву и тестеру
                 if (!(isAdmin || isManager || isDeveloper || isTester)) {
-                    resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    forward403(req, resp);
                     return;
                 }
             }
@@ -124,15 +127,14 @@ public class RolesFilter implements Filter {
             return;
         }
 
-        // home: доступ всем залогиненным
         if (path.equals("/home") || path.equals("/")) {
             chain.doFilter(request, response);
             return;
         }
 
-        // если до сюда дошли: страница не описана выше
         chain.doFilter(request, response);
     }
+
 
     @Override
     public void destroy() {

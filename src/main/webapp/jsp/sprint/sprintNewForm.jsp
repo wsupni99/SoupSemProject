@@ -46,7 +46,7 @@
         </div>
 
         <div class="form-actions">
-            <a href="${pageContext.request.contextPath}/sprints" class="btn btn-secondary">Назад к списку</a>
+            <button type="button" class="btn btn-secondary" onclick="history.back()">Назад</button>
             <input type="submit" value="Создать" class="btn btn-primary">
         </div>
     </form>
