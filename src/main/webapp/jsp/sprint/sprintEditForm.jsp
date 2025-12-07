@@ -47,19 +47,24 @@
             </div>
         </div>
 
-        <div class="form-actions">
-            <input type="submit" value="Сохранить" class="btn btn-primary">
-            <a href="${pageContext.request.contextPath}/sprints" class="btn btn-secondary">Отмена</a>
-            <form id="delete-form"
-                  action="${pageContext.request.contextPath}/sprint/delete"
-                  method="post"
-                  style="margin-top:15px;">
-                <input type="hidden" name="id" value="${sprint.sprintId}">
+        <div class="form-actions-row">
+            <div class="form-actions-left">
                 <button type="button" onclick="deleteSprint()" class="btn btn-danger">
                     Удалить спринт
                 </button>
-            </form>
+            </div>
+            <div class="form-actions-right">
+                <input type="submit" value="Сохранить" class="btn btn-primary">
+                <a href="${pageContext.request.contextPath}/sprints" class="btn btn-secondary">Отмена</a>
+            </div>
         </div>
+    </form>
+
+    <form id="delete-form"
+          action="${pageContext.request.contextPath}/sprint/delete"
+          method="post"
+          style="display:none;">
+        <input type="hidden" name="id" value="${sprint.sprintId}">
     </form>
 </div>
 

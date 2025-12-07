@@ -73,7 +73,8 @@ public class ProjectServlet extends HttpServlet {
         if ("/project/edit".equals(path)) {
             String idParam = req.getParameter("id");
             if (idParam == null || idParam.trim().isEmpty()) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Project ID not provided");
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
                 return;
             }
             try {
@@ -88,14 +89,16 @@ public class ProjectServlet extends HttpServlet {
                 req.setAttribute("projectManagerId", project.getManagerId());
                 req.setAttribute("managers", userService.getAllManagers());
                 req.getRequestDispatcher("/jsp/project/projectEditForm.jsp").forward(req, resp);
-            } catch (NumberFormatException e) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid project ID format");
-            } catch (EntityNotFoundException e) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Project not found");
+            } catch (NumberFormatException | EntityNotFoundException e) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
+                return;
+
             }
             return;
         }
-        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
     }
 
     @Override
@@ -112,8 +115,8 @@ public class ProjectServlet extends HttpServlet {
             if (name == null || name.trim().isEmpty() || startDateStr == null || startDateStr.trim().isEmpty() ||
                     endDateStr == null || endDateStr.trim().isEmpty() || status == null || status.trim().isEmpty() ||
                     managerIdParam == null || managerIdParam.trim().isEmpty()) {
-                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("Required fields not provided");
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
                 return;
             }
             try {
@@ -133,7 +136,8 @@ public class ProjectServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/projects");
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resp.getWriter().write("Creation failed: " + e.getMessage());
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
+                return;
             }
             return;
         }
@@ -153,7 +157,7 @@ public class ProjectServlet extends HttpServlet {
                     || status == null || status.trim().isEmpty()
                     || managerIdParam == null || managerIdParam.trim().isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("Required fields not provided");
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
                 return;
             }
 
@@ -175,7 +179,7 @@ public class ProjectServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/projects");
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resp.getWriter().write("Update failed: " + e.getMessage());
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
             }
             return;
         }
@@ -183,7 +187,7 @@ public class ProjectServlet extends HttpServlet {
             String idParam = req.getParameter("id");
             if (idParam == null || idParam.trim().isEmpty()) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("Project ID not provided");
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
                 return;
             }
             try {
@@ -195,10 +199,10 @@ public class ProjectServlet extends HttpServlet {
                 resp.getWriter().write("Cannot delete project if sprints or tasks are attached to it");
             } catch (EntityNotFoundException e) {
                 resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                resp.getWriter().write("Project not found");
+                req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resp.getWriter().write("Project deletion error");
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
             }
             return;
         }
@@ -214,6 +218,6 @@ public class ProjectServlet extends HttpServlet {
             req.getRequestDispatcher("/jsp/project/projects.jsp").forward(req, resp);
             return;
         }
-        resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
     }
 }

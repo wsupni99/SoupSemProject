@@ -57,15 +57,26 @@
                 </select>
             </div>
         </div>
-        <div class="form-actions">
+    </form>
+    <div class="form-actions-row">
+        <div class="form-actions-left">
+            <button type="button" onclick="deleteProject()" class="btn btn-danger">
+                Удалить проект
+            </button>
+        </div>
+        <div class="form-actions-right">
             <input type="submit" value="Сохранить" class="btn btn-primary">
             <a href="${pageContext.request.contextPath}/projects" class="btn btn-secondary">Отмена</a>
-            <form id="delete-form" action="${pageContext.request.contextPath}/project/delete" method="post" style="margin-top:15px;">
-                <input type="hidden" name="id" value="${projectId}">
-                <button type="button" onclick="deleteProject()" class="btn btn-danger">Удалить проект</button>
-            </form>
         </div>
+    </div>
+
+    <form id="delete-form"
+          action="${pageContext.request.contextPath}/project/delete"
+          method="post"
+          style="display:none;">
+        <input type="hidden" name="id" value="${projectId}">
     </form>
+
 </div>
 
 <script>

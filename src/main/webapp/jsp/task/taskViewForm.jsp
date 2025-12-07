@@ -16,7 +16,7 @@
         </div>
 
         <c:if test="${not empty task}">
-            <div class="form-grid-2">
+            <div class="form-grid-1">
                 <div class="form-group">
                     <label class="form-label">Спринт:</label>
                     <div class="field-static">

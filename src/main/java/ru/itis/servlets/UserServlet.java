@@ -85,6 +85,7 @@ public class UserServlet extends HttpServlet {
         }
 
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
     }
 
     @Override
@@ -108,14 +109,15 @@ public class UserServlet extends HttpServlet {
                 resp.getWriter().write("{\"success\": true}");
             } catch (NumberFormatException e) {
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                resp.getWriter().write("{\"success\": false, \"message\": \"Invalid ID format\"}");
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                resp.getWriter().write("{\"success\": false, \"message\": \"An error occurred while deleting the user. Please try again.\"}");
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
             }
             return;
         }
 
         resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
     }
 }

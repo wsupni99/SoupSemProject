@@ -2,14 +2,10 @@ package ru.itis.servlets;
 
 import ru.itis.entities.Project;
 import ru.itis.entities.Sprint;
-
-import ru.itis.repositories.jdbc.ProjectRepositoryJdbcImpl;
-import ru.itis.repositories.jdbc.SprintRepositoryJdbcImpl;
-import ru.itis.repositories.jdbc.TaskRepositoryJdbcImpl;
-import ru.itis.services.impl.ProjectServiceImpl;
+import ru.itis.exceptions.EntityNotEmptyException;
+import ru.itis.exceptions.EntityNotFoundException;
 import ru.itis.services.interfaces.ProjectService;
 import ru.itis.services.interfaces.SprintService;
-import ru.itis.services.impl.SprintServiceImpl;
 import ru.itis.services.interfaces.UserRoleService;
 
 import javax.servlet.ServletContext;
@@ -65,6 +61,7 @@ public class SprintServlet extends HttpServlet {
         if ("/sprint/new".equals(path)) {
             req.setAttribute("projects", projectService.getAll());
             req.getRequestDispatcher("/jsp/sprint/sprintNewForm.jsp").forward(req, resp);
+            return;
         }
 
         if ("/sprints".equals(path)) {
@@ -78,20 +75,41 @@ public class SprintServlet extends HttpServlet {
             req.setAttribute("sprints", sprints);
             req.setAttribute("projectNames", projectNames);
             req.getRequestDispatcher("/jsp/sprint/sprints.jsp").forward(req, resp);
+            return;
         }
 
         if ("/sprint/edit".equals(path)) {
             String idStr = req.getParameter("id");
-            if (idStr == null || idStr.isEmpty()) {
+            if (idStr == null || idStr.trim().isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
                 return;
             }
-            Long id = Long.parseLong(idStr);
-            Sprint sprint = sprintService.getById(id);
-            List<Project> projects = projectService.getAll();
-            req.setAttribute("sprint", sprint);
-            req.setAttribute("projects", projects);
-            req.getRequestDispatcher("/jsp/sprint/sprintEditForm.jsp").forward(req, resp);
+            try {
+                Long id = Long.parseLong(idStr.trim());
+                Sprint sprint = sprintService.getById(id);
+                List<Project> projects = projectService.getAll();
+                req.setAttribute("sprint", sprint);
+                req.setAttribute("projects", projects);
+                req.getRequestDispatcher("/jsp/sprint/sprintEditForm.jsp").forward(req, resp);
+                return;
+            } catch (NumberFormatException e) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
+                return;
+            } catch (EntityNotFoundException e) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
+                return;
+            } catch (Exception e) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
+                return;
+            }
         }
+
+        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
     }
 
     @Override
@@ -101,44 +119,99 @@ public class SprintServlet extends HttpServlet {
         String path = req.getServletPath();
 
         if ("/sprint/create".equals(path)) {
-            Sprint sprint = new Sprint();
-            sprint.setName(req.getParameter("name"));
-            sprint.setStartDate(Date.valueOf(req.getParameter("startDate")));
-            sprint.setEndDate(Date.valueOf(req.getParameter("endDate")));
-            sprint.setProjectId(Long.valueOf(req.getParameter("projectId")));
-            sprintService.create(sprint);
-            resp.sendRedirect(req.getContextPath() + "/sprints");
+            String name = req.getParameter("name");
+            String startDateStr = req.getParameter("startDate");
+            String endDateStr = req.getParameter("endDate");
+            String projectIdStr = req.getParameter("projectId");
+
+            if (name == null || name.trim().isEmpty()
+                    || startDateStr == null || startDateStr.trim().isEmpty()
+                    || endDateStr == null || endDateStr.trim().isEmpty()
+                    || projectIdStr == null || projectIdStr.trim().isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
+                return;
+            }
+
+            try {
+                Sprint sprint = new Sprint();
+                sprint.setName(name.trim());
+                sprint.setStartDate(Date.valueOf(startDateStr.trim()));
+                sprint.setEndDate(Date.valueOf(endDateStr.trim()));
+                sprint.setProjectId(Long.valueOf(projectIdStr.trim()));
+                sprintService.create(sprint);
+                resp.sendRedirect(req.getContextPath() + "/sprints");
+            } catch (Exception e) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
+            }
+            return;
         }
 
         if ("/sprint/update".equals(path)) {
-            Sprint sprint = new Sprint();
-            sprint.setSprintId(Long.valueOf(req.getParameter("sprintId")));
-            sprint.setName(req.getParameter("name"));
-            sprint.setStartDate(Date.valueOf(req.getParameter("startDate")));
-            sprint.setEndDate(Date.valueOf(req.getParameter("endDate")));
-            sprint.setProjectId(Long.valueOf(req.getParameter("projectId")));
-            sprintService.update(sprint);
-            resp.sendRedirect(req.getContextPath() + "/sprints");
-        }
-        if ("/sprint/delete".equals(path)) {
+            String sprintIdStr = req.getParameter("sprintId");
+            String name = req.getParameter("name");
+            String startDateStr = req.getParameter("startDate");
+            String endDateStr = req.getParameter("endDate");
+            String projectIdStr = req.getParameter("projectId");
+
+            if (sprintIdStr == null || sprintIdStr.trim().isEmpty()
+                    || name == null || name.trim().isEmpty()
+                    || startDateStr == null || startDateStr.trim().isEmpty()
+                    || endDateStr == null || endDateStr.trim().isEmpty()
+                    || projectIdStr == null || projectIdStr.trim().isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
+                return;
+            }
+
             try {
-                String idParam = req.getParameter("id");
-                if (idParam == null || idParam.trim().isEmpty()) {
-                    throw new IllegalArgumentException("Sprint ID not provided");
-                }
-                Long sprintId = Long.parseLong(idParam);
+                Sprint sprint = new Sprint();
+                sprint.setSprintId(Long.valueOf(sprintIdStr.trim()));
+                sprint.setName(name.trim());
+                sprint.setStartDate(Date.valueOf(startDateStr.trim()));
+                sprint.setEndDate(Date.valueOf(endDateStr.trim()));
+                sprint.setProjectId(Long.valueOf(projectIdStr.trim()));
+                sprintService.update(sprint);
+                resp.sendRedirect(req.getContextPath() + "/sprints");
+            } catch (EntityNotFoundException e) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
+            } catch (Exception e) {
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
+            }
+            return;
+        }
+
+        if ("/sprint/delete".equals(path)) {
+            String idParam = req.getParameter("id");
+            if (idParam == null || idParam.trim().isEmpty()) {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
+                return;
+            }
+            try {
+                Long sprintId = Long.parseLong(idParam.trim());
                 sprintService.delete(sprintId);
                 resp.sendRedirect(req.getContextPath() + "/sprints");
             } catch (NumberFormatException e) {
-                resp.getWriter().write("Invalid ID format");
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                req.getRequestDispatcher("/jsp/error/400.jsp").forward(req, resp);
+            } catch (EntityNotEmptyException e) {
+                resp.setStatus(HttpServletResponse.SC_CONFLICT);
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
+            } catch (EntityNotFoundException e) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
             } catch (Exception e) {
-                String msg = e.getMessage();
-                if (msg != null && (msg.contains("foreign key") || msg.contains("violates foreign key"))) {
-                    resp.getWriter().write("Cannot delete sprint if tasks are attached to it");
-                } else {
-                    resp.getWriter().write("Sprint deletion error");
-                }
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                req.getRequestDispatcher("/jsp/error/500.jsp").forward(req, resp);
             }
+            return;
         }
+
+        resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        req.getRequestDispatcher("/jsp/error/404.jsp").forward(req, resp);
     }
 }

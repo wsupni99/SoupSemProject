@@ -3,16 +3,16 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Ошибка 500 — Внутренняя ошибка сервера</title>
+    <title>Ошибка 400 — Некорректный запрос</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body class="form-page">
 <div class="error-card">
-    <div class="error-icon error-icon-500">!</div>
-    <h1 class="error-title">Что‑то пошло не так</h1>
+    <div class="error-icon error-icon-400">400</div>
+    <h1 class="error-title">Некорректный запрос</h1>
     <p class="error-subtitle">
-        На сервере произошла внутренняя ошибка. Попробуйте обновить страницу
-        или зайдите позже.
+        Сервер не может обработать этот запрос. Проверьте корректность адреса
+        или введённых данных.
     </p>
 
     <div class="error-actions">
@@ -20,7 +20,7 @@
         <button type="button" class="btn btn-secondary" onclick="history.back()">Назад</button>
     </div>
 
-    <p class="error-code">Код ошибки: 500</p>
+    <p class="error-code">Код ошибки: 400</p>
 </div>
 </body>
 </html>

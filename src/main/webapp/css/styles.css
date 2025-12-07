@@ -602,7 +602,6 @@ body.auth-page {
 
 .field-static.multiline {
     align-items: flex-start;
-    white-space: pre-wrap;
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -805,4 +804,31 @@ body.auth-page {
     color: #0d6efd;
     font-size: 20px;
     font-weight: 600;
+}
+
+.error-icon-500 {
+    border-color: #fd7e14;
+    background: #fff4e6;
+    color: #fd7e14;
+}
+
+.error-icon-400 {
+    border-color: #6c757d;
+    background: #f1f3f5;
+    color: #6c757d;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.form-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e9ecef;
+}
+
+.form-actions-right .btn {
+    margin-left: 8px;
 }
